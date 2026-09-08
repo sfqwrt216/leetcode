@@ -2,7 +2,7 @@
 
 本地资料："D:\代码随想录PDF全集V3.0\1.《代码随想录》数组（V3.0）.pdf"
 
-![image-20260908230516870](D:\代码随想录PDF全集V3.0\Array\Array.assets\image-20260908230516870.png)
+![二分查找代码](Array.assets/image-20260908230516870.png)
 
 ```python
 class Solution:
@@ -25,6 +25,6 @@ class Solution:
 
  还有数组nums是【】引用
 
-![image-20260908233445233](D:\代码随想录PDF全集V3.0\Array\Array.assets\image-20260908233445233.png)
+![二分查找代码](Array.assets/image-20260908233445233.png)
 
 这个while也要对齐
