@@ -27,4 +27,4 @@ class Solution:
 
 ![二分查找代码](Array.assets/image-20260908233445233.png)
 
-这个while也要对齐
+这个while也要对齐1
