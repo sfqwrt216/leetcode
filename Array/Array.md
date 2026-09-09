@@ -41,7 +41,7 @@ class Solution:
 
 本地资料："D:\代码随想录PDF全集V3.0\1.《代码随想录》数组（V3.0）.pdf"
 
-![image-20260909223437532](.\Array.assets\image-20260909223437532.png)
+![image-20260909223437532](Array.assets/image-20260909223437532.png)
 
 
 
@@ -73,4 +73,4 @@ class Solution:
 
 注意他是用如下方案检验你的代码的，k是删除完元素的数组nums的长度 ，并且nums是更新过的，这个函数调用的外部nums，不存在值传递的东西
 
-![image-20260909224200483](.\Array.assets\image-20260909224200483.png)
+![image-20260909224200483](Array.assets/image-20260909224200483.png)
