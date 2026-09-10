@@ -10,30 +10,67 @@
 
 ### 伪代码如下：
 
-```python
-class Solution:
-    def search(self, nums: List[int], target: int) -> int:
-        left=0
-        right=len(nums)-1
-        while left<=right:
-          middle =left+(right-left) // 2
-          if nums[middle] > target:
-            right=middle-1
-          elif nums[middle] <target:
-            left=middle+1
-          else: return middle
-        return -1
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+
+        int left=0;
+        int right=nums.size()-1;
+        while (left<=right){
+        int middle=left+(right-left) /2;
+        if(nums[middle]>target){
+           right=middle-1;
+           }
+        else if(nums[middle]<target){
+            left=middle+1;
+           }
+        else return middle;
+        }
+        return -1;
+    }
+};
+
 ```
 
 ### 解题心得：
 
-           c++转python，还没学完python，第一次写python，导致很多地方语法不太会 比如c++的（）是python的： 以及缩进代替，并使用 `/` 计算中点，导致下标不是整数还有数组nums才是【】引用
-
-这个while也要对齐
-
-![二分查找代码](Array.assets/image-20260908233445233.png)
+    right=nums.size()-1这个我都不知道还有size，其他的还好吧
 
 
+
+
+
+# 搜索插入位置
+
+
+
+[35. 搜索插入位置 - 力扣（LeetCode）](https://leetcode.cn/problems/search-insert-position/description/)
+
+![image-20260909230631522](Array.assets/image-20260909230631522.png)
+
+### 伪代码如下
+
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        left=0 
+        right=len(nums)-1
+        while left<=right:
+            middle=left+(right-left) // 2
+            if nums[middle]>target:
+                right=middle-1
+            elif nums[middle]<target:
+                left=middle+1
+            else : return middle
+        return left
+```
+
+### 解题心得
+
+这次二分法忘记了  while left<=right:这一行代码了，看了一下题解发现了，把这个补充好之后问题就迎刃而解了，一开始没写这一行的时候我还在想  
+
+ return left该怎么返回去呢
 
 # 移除元素
 
