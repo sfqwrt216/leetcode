@@ -315,6 +315,8 @@ class Solution:
 
 [844. 比较含退格的字符串 - 力扣（LeetCode）](https://leetcode.cn/problems/backspace-string-compare/solutions/451606/bi-jiao-han-tui-ge-de-zi-fu-chuan-by-leetcode-solu/)
 
+<img src="Array.assets/image-20260912135642562.png" alt="image-20260912135642562" style="zoom:67%;" />
+
 ### 伪代码：
 
 ```python
@@ -376,3 +378,211 @@ class Solution:
 
 
 
+
+
+
+
+# 有序数组的平方
+
+[977. 有序数组的平方 - 力扣（LeetCode）](https://leetcode.cn/problems/squares-of-a-sorted-array/)
+
+![image-20260912141306402](Array.assets/image-20260912141306402.png)
+
+### 伪代码
+
+```python
+class Solution:
+    def sortedSquares(self, nums: List[int]) -> List[int]:
+
+        n=len(nums)
+        ans=[0]*n  #开辟n个全是0的数组  
+
+        left,right,pos=0,n-1,n-1  #因为他是两边进行比较，所以pos是值最大的
+
+        while left<=right:
+            if nums[left]*nums[left]>nums[right]*nums[right]:
+                ans[pos]=nums[left]*nums[left]
+                left=left+1
+            elif nums[left]*nums[left]<=nums[right]*nums[right]:  #但是要注意这个if的判断，可能有相等的情况，相等就随便放哪个都可以
+                 ans[pos]=nums[right]*nums[right]
+                 right=right-1
+
+            pos=pos-1
+        
+        return ans
+            
+
+
+```
+
+
+
+### 思路：
+
+​	其实题目不难，就是从左右两边比较，大的哪一个放在新的数组里面  ，但是要注意这个if的判断，可能有相等的情况
+
+
+
+
+
+
+
+
+
+# 长度最小的子数组
+
+[209. 长度最小的子数组 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-size-subarray-sum/description/)
+
+![image-20260912192550277](Array.assets/image-20260912192550277.png)
+
+
+
+### 伪代码
+
+
+
+```python
+# 子数组是原来数组里面连续的数组
+
+class Solution:
+    def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+
+        if not nums:
+            return 0
+        
+        n=len(nums)
+        start,end,total=0,0,0
+        sublength=n+1     #不能等于n因为有可能正好就是整个长度加起来是target 这样return结果就不对了
+
+        while end<n :#滑动窗口抵达右边界之间
+            total=total+nums[end]
+            while total>=target:
+                sublength=min(sublength,end-start+1) #为什么是这个拿笔举例一下最小情况即可
+                total=total-nums[start]
+                start=start+1
+            end=end+1
+
+        return 0 if sublength==n+1 else sublength
+    
+    
+    
+#写题目的时候遇到的疑惑
+ #1.为什么不sublength=0然后没有的话直接输出0直接输出0 ：  如果想通了第二个问题这个问题就迎刃而解了
+# 2.为什么要min：因为前面最短可能是 2   后面移动的时候又有一个4的长度的，到时候会覆盖掉
+#3. 为什么sublength=n+1而不是n 因为可能正好加起来等于target然后你有返回return sublength了
+
+   
+滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
+
+```
+
+### 思路
+
+ 滑动窗口： start和end包含的全部加起来，然后在移动start看看是不是还满足，不满足就移动end寻找下一个满足条件的
+
+​    滑动窗口一定能遍历整个数组的所有子数组，时间复杂度比暴力解法更快
+
+
+
+
+
+滑动窗口条件： 必须是子数组，如果可以随意相加就不是滑动窗口了，并且还是正整数
+
+
+
+
+
+
+
+
+
+# 水果成蓝
+
+![image-20260912205552012](Array.assets/image-20260912205552012.png)
+
+### 伪代码
+
+```python
+class Solution:
+    def totalFruit(self, fruits: List[int]) -> int:
+
+        cnt = Counter() #创建一个字典 键值不重复但是值重复 这里键 cnt[fruits[right]]就是水果种类 
+        left,right=0,0
+        max_length=-1
+
+        while right<len(fruits):
+            cnt[fruits[right]]=  cnt[fruits[right]]+1  #找到这个key的键对应的值+1
+
+            while len(cnt)>2:
+                cnt[fruits[left]]= cnt[fruits[left]]-1
+                if cnt[fruits[left]] == 0:  #把左边那个移除了之后 直接把他的键值删了
+                    cnt.pop(fruits[left])
+                left=left+1
+            max_length=max(max_length,right-left+1)  
+            right=right+1
+        return max_length
+
+    
+    
+    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
+```
+
+
+
+### 核心思路
+
+  用字典里的键值不重复len（cnt）>2 去判断，满足条件之后把左边的值去他删掉再去判断
+
+扩大窗口--->键值一样把值加进去--->键得多少len（cnt）>2 之后吧左边的全部用pop移出去
+
+#  最小子串覆盖
+
+![image-20260912211602493](Array.assets/image-20260912211602493.png)
+
+```python
+from collections import Counter
+
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        #把t中的键值和多少存储下来
+        ori=Counter()
+        for char in t:
+            ori[char]=ori[char]+1
+
+        #定义去检查的最短窗口子串去和ori对比的字典
+        temp=Counter()
+        
+        def check()->bool:
+            for char in ori:
+                if temp[char]<ori[char]:
+                    return False
+            return True
+
+        left,right,length,start=0,0,999999999999999999999999999,-1
+
+        while right<len(s):
+            if s[right] in ori:
+                temp[s[right]]=temp[s[right]]+1
+
+            while check() ==True:  #如果真的存在
+                if right-left+1<length:
+                    length=right-left+1
+                    start=left
+                
+                if s[left] in ori: #如果这个left在这个ori当中，那么记得还要给他删掉
+                    temp[s[left]] =temp[s[left]]- 1
+                left=left+1
+                    
+            right=right+1
+
+        if   start == -1:
+            return ""
+        else: return s[start:start+length]
+    
+    
+    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
+```
+
+思路：还是用字典去存储
+
+​    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
