@@ -425,9 +425,45 @@ class Solution:
 
 
 
+# 滑动窗口总结
 
 
 
+滑动窗口通常使用两个指针 `left` 和 `right` 表示一个连续区间。一般让 `right` 不断向右移动，把新的元素或字符加入窗口，并同步更新窗口中的状态，例如窗口总和、元素种类、字符数量等。当窗口满足题目要求时，再移动 `left` 缩小窗口，尝试寻找更短或更合适的答案。
+
+移动 `left` 时，要注意同步移除 `left` 所指向的元素：如果维护的是总和，就减去这个元素；如果维护的是计数，就把对应数量减一；如果某个元素的数量减为零，还要从字典或计数器中删除。否则，窗口记录的状态就会和实际内容不一致。
+
+滑动窗口的基本过程是：
+
+1. `right` 向右扩大窗口；
+2. 更新窗口状态；
+3. 如果窗口不满足条件，继续移动 `right`；
+4. 如果窗口满足条件，移动 `left` 缩小窗口；
+5. 在窗口合法时更新答案。
+
+不同题目的区别主要在于“什么时候更新答案”：
+
+- 求满足条件的最短子数组或最小覆盖子串：窗口满足条件后，尽量移动 `left`，并记录最小长度；
+- 求满足条件的最长子数组：窗口超过限制后，移动 `left` 直到重新合法，然后记录最大长度；
+- 如果窗口中有元素数量或种类限制，需要使用字典或计数器维护窗口状态。
+
+窗口长度通常是：right - left + 1
+
+
+
+
+
+你原来的开头可以改成更准确的一句话：
+
+> 让 `right` 右指针不断向右搜索并扩大窗口；当窗口满足或违反题目条件时，通过移动 `left` 左指针缩小窗口，同时及时移除 `left` 指向的元素并更新窗口状态。
+
+这三道题可以用一句话区分：
+
+```text
+最小子数组：满足总和后缩小，找最短。
+水果成篮：超过两种后缩小，找最长。
+最小覆盖子串：满足字符数量后缩小，找最短。
+```
 
 # 长度最小的子数组
 
@@ -562,14 +598,14 @@ class Solution:
 
         while right<len(s):
             if s[right] in ori:
-                temp[s[right]]=temp[s[right]]+1
+                temp[s[right]]=temp[s[right]]+1     #肯定不能啥都加进去呀，在的时候才加
 
             while check() ==True:  #如果真的存在
                 if right-left+1<length:
                     length=right-left+1
                     start=left
                 
-                if s[left] in ori: #如果这个left在这个ori当中，那么记得还要给他删掉
+                if s[left] in ori: #如果这个left在这个ori当中，那么记得还要给他删掉  这个在重写的时候老是忘记删掉他
                     temp[s[left]] =temp[s[left]]- 1
                 left=left+1
                     
@@ -586,3 +622,117 @@ class Solution:
 思路：还是用字典去存储
 
 ​    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
+
+
+
+
+
+再写一遍之后的易错点：
+
+1.图片里的我是这样写的：start直接等娱乐left用min去比较最小值，而我的伪代码是 先判断是否比他小，我再去让start==left
+
+![image-20260913110526150](Array.assets/image-20260913110526150.png)
+
+
+
+# 螺旋矩阵
+
+### 伪代码：
+
+```python
+class Solution:
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        matrix = [[0] * n for _ in range(n)]
+        num=1
+        left,top=0,0
+        right,bottom=n-1,n-1
+
+        while left<=right and top<=bottom:
+            #上边：从左到右
+            for col in range(left,right+1):
+                matrix[top][col]=num
+                num=num+1
+            #右边： 从上到下
+            for row in range(top+1,bottom+1):
+                matrix[row][right]=num
+                num=num+1
+            if left < right:  #就是left和right 相等 以及 top和bottom相等说明就剩一个了，并且只有第上边和下边会同时满足条件并且填充
+                #下边:从右到左
+                for col in range(right-1,left,-1):
+                    matrix[bottom][col]=num
+                    num=num+1
+            #左边 从下到上
+            for row in range(bottom,top,-1):
+                matrix[row][left]=num
+                num=num+1
+
+            left += 1
+            right -= 1
+            top += 1
+            bottom -= 1
+
+        return matrix
+  
+
+
+```
+
+思路：
+
+​    其实就直接打印得了
+
+# 螺旋矩阵
+
+[54. 螺旋矩阵 - 力扣（LeetCode）](https://leetcode.cn/problems/spiral-matrix/description/)
+
+题目：
+
+![image-20260915103351199](Array.assets/image-20260915103351199.png)
+
+### 伪代码：
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        left,top=0,0
+        right,bottom=len(matrix[0]) -1,len(matrix)-1
+
+        #row是行 col是列  这个是新数组的那个
+        row, col = len(matrix), len(matrix[0])   #row是行len(matrix)装着子列表呢  col是列 matrix[0]表示第一个子列表，len表示长度
+        order =list()#定义一个列表 也就是数组
+
+        while left<=right and top<=bottom:
+            #上边: 从left到right
+            for col in range(left,right+1):     #这个就算剩最后一个还会执行
+                order.append(matrix[top][col])
+            
+            for row in range(top+1,bottom+1):
+                order.append(matrix[row][right]) #这个剩最后一个不会执行了 top=bottom
+            
+            if left < right and top < bottom:  
+
+                for col in range(right-1,left,-1):
+                    order.append(matrix[bottom][col])
+            
+                for row in range(bottom,top,-1):
+                    order.append(matrix[row][left])     
+
+            left, right, top, bottom = left + 1, right - 1, top + 1, bottom - 1
+
+        return order
+
+
+
+```
+
+
+
+### 解题思路：
+
+这题和上面的螺旋矩阵一样， 不过 多了一个len(matrix[0])和len(matrix)的知识点，
+
+1.len(matrix[0])是一个横向的列表，所以他len长度就是指的列 ，
+
+2.len（matrix）就是指的列因为列表有很多子列表，len一下就是代表的有多少个行
+
+3. if left < right and top < bottom:  注意这个一定要加上哦
