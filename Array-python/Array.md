@@ -1,6 +1,4 @@
-# 二分查找
-
-
+# 二分查找 
 
 ### 总结：二分查找俩个必须条件，  1.有序 2.不重复
 
@@ -35,13 +33,7 @@ class Solution:
 
 ![二分查找代码](Array.assets/image-20260908233445233.png)
 
-
-
-
-
 # 搜索插入位置
-
-
 
 [35. 搜索插入位置 - 力扣（LeetCode）](https://leetcode.cn/problems/search-insert-position/description/)
 
@@ -66,7 +58,7 @@ class Solution:
 
 ### 解题心得
 
-这次二分法忘记了  while left<=right:这一行代码了，看了一下题解发现了，把这个补充好之后问题就迎刃而解了，一开始没写这一行的时候我还在想  
+这次二分法忘记了  while left<=right:这一行代码了，看了一下题解发现了，把这个补充好之后问题就迎刃而解了，一开始没写这一行的时候我还在想
 
  return left该怎么返回去呢
 
@@ -84,7 +76,7 @@ class Solution:
     def searchRange(self, nums: List[int], target: int) -> List[int]:
         #1.target不存在数组中
         #2.target存在数组中，在数组中间
-        
+      
         #寻找第一个大于等于value的函数并且是左边界   继续二分法查找左边界左边界左边界左边界左边界
         def searchFirst(value: int) -> int:
             left=0
@@ -96,7 +88,7 @@ class Solution:
                 else:#nums[left]>=value  找到了左边界就一直让right缩到left=right最核心的就是这个函数是找左边界的
                     right=right-1
             return left
-            
+          
         first=searchFirst(target) #寻找左边界
         if first==len(nums) or nums[first] != target:  #因为left=0，往右边开始缩，所以不要考虑左边界 1.target比数组里的都大，2.target可能在数组中间
             return [-1,-1]
@@ -105,17 +97,13 @@ class Solution:
 
 ```
 
-
-
 ### 解题心得
 
-​       找到target的左边界 ，在找到target+1的左边界-1 就是要的答案了
+       找到target的左边界 ，在找到target+1的左边界-1 就是要的答案了
 
-思路：可以先找到左边界，在二分的基础上直接修改，左边界要保证nums[left]<value 所以找到了之后就不满足nums[left]<value了所以left就停在了左边界    
+思路：可以先找到左边界，在二分的基础上直接修改，左边界要保证nums[left]<value 所以找到了之后就不满足nums[left]<value了所以left就停在了左边界
 
-​        else:#nums[left]>=value找到左边界之后就一直让right减小直到完成while循环的条件     整个核心构造就是searchFirst函数的实现
-
-
+        else:#nums[left]>=value找到左边界之后就一直让right减小直到完成while循环的条件     整个核心构造就是searchFirst函数的实现
 
 # X的平方根
 
@@ -130,7 +118,7 @@ class Solution:
         r=x
         while l<=r:
             middle=l+(r-l)//2
-            
+          
             if middle*middle==x:
                 return middle
             elif middle*middle<x:  #middle*middle>x之后 l已经不再开始动了 l一直停下来了，但是直接return放不下去
@@ -140,15 +128,9 @@ class Solution:
         return r              #所以为什么这里返回的是r，是因为middle*middle>x之后r一直往左边缩，直到r<l
 ```
 
-
-
 ### 解题如下
 
 思路：注意返回值是R  L直到middle*middle<x就再也没动过了，等到r来找L
-
-
-
-
 
 # 有效的完全平方数
 
@@ -168,9 +150,9 @@ class Solution:
                 elif mid*mid>num:
                     right=mid-1
             return False
-        
+      
 
-        
+      
 ```
 
 ### 解题思路
@@ -186,10 +168,6 @@ class Solution:
 本地资料："D:\代码随想录PDF全集V3.0\1.《代码随想录》数组（V3.0）.pdf"
 
 ![image-20260909223437532](Array.assets/image-20260909223437532.png)
-
-
-
-
 
 ### 伪代码如下
 
@@ -211,17 +189,11 @@ class Solution:
 
 ```
 
-
-
 ### 解题心得：
 
 注意他是用如下方案检验你的代码的，k是删除完元素的数组nums的长度 ，并且nums是更新过的，这个函数调用的外部nums，不存在值传递的东西
 
 ![image-20260909224200483](Array.assets/image-20260909224200483.png)
-
-
-
-
 
 # 删除有序数组的重复项
 
@@ -241,7 +213,7 @@ class Solution:
             fast=fast+1
 
         return slow  #因为这个后面就是要多少个，所以slow和fast不能从0开始            明天试试从0开始并且num【0】从第一个if开始就判断过了
-        
+      
 ```
 
 ```python
@@ -255,7 +227,7 @@ class Solution:
             if fast+1 ==len(nums):
                 if nums[fast]!=nums[fast-1]:
                   nums[slow]=nums[fast]
-                  slow=slow+1                   
+                  slow=slow+1                 
             elif(fast+1<len(nums) and nums[fast]!=nums[fast+1]):
                 nums[slow]=nums[fast]
                 slow=slow+1
@@ -297,19 +269,9 @@ class Solution:
  # nums[left], nums[right] = nums[right], nums[left]可以用这句代码区执行两个数值置换，并且不用temp完成了少量内存
 ```
 
-
-
-### 思路：      
+### 思路：
 
   nums[left], nums[right] = nums[right], nums[left]可以用这句代码区执行两个数值置换，并且不用temp完成了少量内存
-
-
-
-
-
-
-
-
 
 # 比较含退格的字符串
 
@@ -355,7 +317,7 @@ class Solution:
                 #这个就是经过查找下一个要对比的值之后一个没有了一个还有    ++ 两种情况01 10   00是0那么就不会执行false++ 
                  # if index_s<0 or index_t<0:  有三种情况 01 10 00  但是00不要执行false是执行true         0指的是判断
                 return False
-            
+          
             index_s=index_s-1
             index_t=index_t-1
 
@@ -365,8 +327,6 @@ class Solution:
         return True
 ```
 
-
-
 ### 思路：
 
 1.首先就是要倒序读取，添加一个新变量skip来记录有多少个# 并且要跳多少回
@@ -375,12 +335,6 @@ class Solution:
 
 3. 两个判断： index_s >= 0 and index_t >= 0:  都有值的话就直接进行对比，index_s >= 0 or index_t>= 0 要是一个又有一个没那么就直接返回False  ，index_s在内层循环可能会改变
 4. 可能在第二个判断的时候 已经有两个 index是-1了然后到时候在跳出外层while进行return true
-
-
-
-
-
-
 
 # 有序数组的平方
 
@@ -408,26 +362,18 @@ class Solution:
                  right=right-1
 
             pos=pos-1
-        
+      
         return ans
-            
+          
 
 
 ```
 
-
-
 ### 思路：
 
-​	其实题目不难，就是从左右两边比较，大的哪一个放在新的数组里面  ，但是要注意这个if的判断，可能有相等的情况
-
-
-
-
+	其实题目不难，就是从左右两边比较，大的哪一个放在新的数组里面  ，但是要注意这个if的判断，可能有相等的情况
 
 # 滑动窗口总结
-
-
 
 滑动窗口通常使用两个指针 `left` 和 `right` 表示一个连续区间。一般让 `right` 不断向右移动，把新的元素或字符加入窗口，并同步更新窗口中的状态，例如窗口总和、元素种类、字符数量等。当窗口满足题目要求时，再移动 `left` 缩小窗口，尝试寻找更短或更合适的答案。
 
@@ -449,10 +395,6 @@ class Solution:
 
 窗口长度通常是：right - left + 1
 
-
-
-
-
 你原来的开头可以改成更准确的一句话：
 
 > 让 `right` 右指针不断向右搜索并扩大窗口；当窗口满足或违反题目条件时，通过移动 `left` 左指针缩小窗口，同时及时移除 `left` 指向的元素并更新窗口状态。
@@ -471,11 +413,7 @@ class Solution:
 
 ![image-20260912192550277](Array.assets/image-20260912192550277.png)
 
-
-
 ### 伪代码
-
-
 
 ```python
 # 子数组是原来数组里面连续的数组
@@ -485,7 +423,7 @@ class Solution:
 
         if not nums:
             return 0
-        
+      
         n=len(nums)
         start,end,total=0,0,0
         sublength=n+1     #不能等于n因为有可能正好就是整个长度加起来是target 这样return结果就不对了
@@ -499,9 +437,9 @@ class Solution:
             end=end+1
 
         return 0 if sublength==n+1 else sublength
-    
-    
-    
+  
+  
+  
 #写题目的时候遇到的疑惑
  #1.为什么不sublength=0然后没有的话直接输出0直接输出0 ：  如果想通了第二个问题这个问题就迎刃而解了
 # 2.为什么要min：因为前面最短可能是 2   后面移动的时候又有一个4的长度的，到时候会覆盖掉
@@ -516,21 +454,9 @@ class Solution:
 
  滑动窗口： start和end包含的全部加起来，然后在移动start看看是不是还满足，不满足就移动end寻找下一个满足条件的
 
-​    滑动窗口一定能遍历整个数组的所有子数组，时间复杂度比暴力解法更快
-
-
-
-
+    滑动窗口一定能遍历整个数组的所有子数组，时间复杂度比暴力解法更快
 
 滑动窗口条件： 必须是子数组，如果可以随意相加就不是滑动窗口了，并且还是正整数
-
-
-
-
-
-
-
-
 
 # 水果成蓝
 
@@ -558,12 +484,10 @@ class Solution:
             right=right+1
         return max_length
 
-    
-    
+  
+  
     滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
 ```
-
-
 
 ### 核心思路
 
@@ -571,7 +495,7 @@ class Solution:
 
 扩大窗口--->键值一样把值加进去--->键得多少len（cnt）>2 之后吧左边的全部用pop移出去
 
-#  最小子串覆盖
+# 最小子串覆盖
 
 ![image-20260912211602493](Array.assets/image-20260912211602493.png)
 
@@ -587,7 +511,7 @@ class Solution:
 
         #定义去检查的最短窗口子串去和ori对比的字典
         temp=Counter()
-        
+      
         def check()->bool:
             for char in ori:
                 if temp[char]<ori[char]:
@@ -604,36 +528,30 @@ class Solution:
                 if right-left+1<length:
                     length=right-left+1
                     start=left
-                
+              
                 if s[left] in ori: #如果这个left在这个ori当中，那么记得还要给他删掉  这个在重写的时候老是忘记删掉他
                     temp[s[left]] =temp[s[left]]- 1
                 left=left+1
-                    
+                  
             right=right+1
 
         if   start == -1:
             return ""
         else: return s[start:start+length]
-    
-    
+  
+  
     滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
 ```
 
 思路：还是用字典去存储
 
-​    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
-
-
-
-
+    滑动窗口思路: 右指针去往右搜索，当满足条件之后，看下缩小左边界是不是可以仍然满足，找到最优解
 
 再写一遍之后的易错点：
 
 1.图片里的我是这样写的：start直接等娱乐left用min去比较最小值，而我的伪代码是 先判断是否比他小，我再去让start==left
 
 ![image-20260913110526150](Array.assets/image-20260913110526150.png)
-
-
 
 # 螺旋矩阵
 
@@ -679,7 +597,7 @@ class Solution:
 
 思路：
 
-​    其实就直接打印得了
+    其实就直接打印得了
 
 # 螺旋矩阵
 
@@ -705,17 +623,17 @@ class Solution:
             #上边: 从left到right
             for col in range(left,right+1):     #这个就算剩最后一个还会执行
                 order.append(matrix[top][col])
-            
+          
             for row in range(top+1,bottom+1):
                 order.append(matrix[row][right]) #这个剩最后一个不会执行了 top=bottom
-            
+          
             if left < right and top < bottom:  
 
                 for col in range(right-1,left,-1):
                     order.append(matrix[bottom][col])
-            
+          
                 for row in range(bottom,top,-1):
-                    order.append(matrix[row][left])     
+                    order.append(matrix[row][left])   
 
             left, right, top, bottom = left + 1, right - 1, top + 1, bottom - 1
 
@@ -724,8 +642,6 @@ class Solution:
 
 
 ```
-
-
 
 ### 解题思路：
 
