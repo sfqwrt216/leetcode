@@ -15,7 +15,7 @@
 
 python的and ： 先处理左边满足才会处理右边
 
-![image-20260917224118637](Linked list.assets\image-20260917224118637.png)
+![image-20260917224118637](Linked list.assets/image-20260917224118637.png)
 
 
 
@@ -23,7 +23,7 @@ python的and ： 先处理左边满足才会处理右边
 
 [203. 移除链表元素 - 力扣（LeetCode）](https://leetcode.cn/problems/remove-linked-list-elements/description/)
 
-![image-20260915111521256](Linked list.assets\image-20260915111521256.png)
+![image-20260915111521256](Linked list.assets/image-20260915111521256.png)
 
 ### 伪代码
 
@@ -145,7 +145,7 @@ class MyLinkedList:
 
 [206. 反转链表 - 力扣（LeetCode）](https://leetcode.cn/problems/reverse-linked-list/description/)
 
-![image-20260916152051006](Linked list.assets\image-20260916152051006.png)
+![image-20260916152051006](Linked list.assets/image-20260916152051006.png)
 
 
 
@@ -224,7 +224,7 @@ class Solution:
 
 [24. 两两交换链表中的节点 - 力扣（LeetCode）](https://leetcode.cn/problems/swap-nodes-in-pairs/)
 
-![image-20260917160529834](Linked list.assets\image-20260917160529834.png)
+![image-20260917160529834](Linked list.assets/image-20260917160529834.png)
 
 ### 伪代码：
 
@@ -276,7 +276,7 @@ class Solution:
 
 
 
-<img src="Linked list.assets\image-20260917160358207.png" alt="image-20260917160358207"  />
+<img src="Linked list.assets/image-20260917160358207.png" alt="image-20260917160358207"  />
 
 
 
@@ -288,7 +288,7 @@ class Solution:
 
 [19. 删除链表的倒数第 N 个结点 - 力扣（LeetCode）](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
 
-![image-20260917163604366](Linked list.assets\image-20260917163604366.png)
+![image-20260917163604366](Linked list.assets/image-20260917163604366.png)
 
 
 
@@ -329,7 +329,7 @@ class Solution:
 
 ```
 
-![image-20260917162311786](Linked list.assets\image-20260917162311786.png)
+![image-20260917162311786](Linked list.assets/image-20260917162311786.png)
 
 
 
@@ -376,7 +376,7 @@ class Solution:
 
 [面试题 02.07. 链表相交 - 力扣（LeetCode）](https://leetcode.cn/problems/intersection-of-two-linked-lists-lcci/)
 
-![image-20260917174637136](Linked list.assets\image-20260917174637136.png)
+![image-20260917174637136](Linked list.assets/image-20260917174637136.png)
 
 
 
@@ -420,7 +420,7 @@ class Solution:
 
 有交点：
 
-![image-20260917174742664](Linked list.assets\image-20260917174742664.png)
+![image-20260917174742664](Linked list.assets/image-20260917174742664.png)
 
 
 
@@ -434,7 +434,7 @@ class Solution:
 
 [142. 环形链表 II - 力扣（LeetCode）](https://leetcode.cn/problems/linked-list-cycle-ii/)
 
-![image-20260917224438127](Linked list.assets\image-20260917224438127.png)
+![image-20260917224438127](Linked list.assets/image-20260917224438127.png)
 
 ```python
 # Definition for singly-linked list.
@@ -479,4 +479,4 @@ class Solution:
 
 
 
-![image-20260917223857906](Linked list.assets\image-20260917223857906.png)
+![image-20260917223857906](Linked list.assets/image-20260917223857906.png)
