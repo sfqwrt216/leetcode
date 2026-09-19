@@ -25,7 +25,7 @@
 5. ```python
      
                                                           set 
-          
+                    
      #  set的定义方法： 
        result_set = set()       # 存放结果，自动去重
        nums_set = set(nums1)    # 将 nums1 转成集合
@@ -537,4 +537,74 @@ class Solution:
 
 ### 思路：
 
-索引不能相等，并不是数值不能相等， num【i】 去重得向前去重，向后去重就忽略了 【-1，-1,2】的情况  。 j k的去重就得往后判断了
+索引不能相等，并不是数值不能相等， num【i】 去重得向前去重，向后去重就忽略了 【-1，-1,2】的情况  。 j k的去重就得往后判断了，因为如果用了-1这种情况然后left+1之后还是-1，所以还要判断一次再去+1
+
+
+
+
+
+
+
+# 四数之和
+
+[18. 四数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/4sum/description/)
+
+![image-20260919210047873](hash table.assets/image-20260919210047873.png)
+
+### 伪代码：
+
+```python
+class Solution:
+    def fourSum(self, nums: list[int], target: int) -> list[list[int]]:
+
+        result=[]
+        nums.sort()
+        n=len(nums)
+        value=-1
+        
+        for i in range(0,n-3):
+            if i>0 and nums[i]==nums[i-1]:
+                continue
+            for j in range(i+1,n-2):
+                value=nums[i]+nums[j]
+                if j>i+1 and nums[j]==nums[j-1]:
+                    continue
+                left=j+1
+                right=n-1
+
+                while right>left:
+                    if value+nums[right]+nums[left]>target:
+                        right-=1
+                    elif value+nums[right]+nums[left]<target:
+                        left+=1
+                    else :
+                        result.append([nums[i],nums[j],nums[left],nums[right]])
+
+                        while right>left and nums[right]==nums[right-1]:
+                            right-=1
+
+                        while right>left and nums[left]==nums[left+1]:
+                            left+=1
+                        left+=1
+                        right-=1
+        return result
+
+
+
+```
+
+
+
+
+
+### 思路;
+
+和三数之和一模一样的代码，只不过要加一个 j的判定
+
+```python
+  for j in range(i+1,n-2):
+                value=nums[i]+nums[j]
+                if j>i+1 and nums[j]==nums[j-1]:
+                    continue
+```
+
