@@ -25,7 +25,7 @@
 5. ```python
      
                                                           set 
-                    
+                                        
      #  set的定义方法： 
        result_set = set()       # 存放结果，自动去重
        nums_set = set(nums1)    # 将 nums1 转成集合
@@ -57,6 +57,15 @@
  seen.add(i,nums[i])  #❌️ 字典没有这样定义的add
     
  seen[nums[i]]=i   # ✅️ 直接这样加
+
+
+# map给数值的方法 不能直接	seen[char]+= 1 因为如果之前没有这个字典的话，就根本找不到
+ seen=dict()
+   for char in magazine:
+     if char not in seen:
+         seen[char]=1
+       else:
+      	seen[char]= seen[char]+1
 ```
 
 
@@ -425,7 +434,7 @@ class Solution:
 
 
 
-# 四数之和
+# 6.四数相加
 
 
 
@@ -474,11 +483,48 @@ class Solution:
 
 最重要的一点就是    counter=counter+seen[-i-j]  这样的话就解决了还要来一次的机会
 
+# 7.赎金信
+
+[383. 赎金信 - 力扣（LeetCode）](https://leetcode.cn/problems/ransom-note/description/)
 
 
 
+![image-20260920102053119](hash table.assets/image-20260920102053119.png)
 
-# 三数之和
+### 伪代码
+
+```python
+class Solution:
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        seen=dict()
+        for char in magazine:
+            if char not in seen:
+                seen[char]=1
+            else:
+                seen[char]= seen[char]+1
+        
+        for char in ransomNote:
+            if char not in seen:
+                return False
+            
+            seen[char]= seen[char]-1               
+
+        for i in seen:
+            if seen[i] <0:
+                return False
+
+        return True
+```
+
+
+
+### 思路：
+
+
+
+和第一个有效的字母异位词差不多，就是直接存储一个字符串，然后另一个一直减去
+
+# 8.三数之和
 
 [15. 三数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/3sum/)
 
@@ -545,7 +591,7 @@ class Solution:
 
 
 
-# 四数之和
+# 9.四数之和
 
 [18. 四数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/4sum/description/)
 
