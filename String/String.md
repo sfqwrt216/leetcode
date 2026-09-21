@@ -376,7 +376,7 @@ print(s[-k:] + s[:-k])
 
 
 
-
+s
 
 
 
@@ -384,10 +384,54 @@ print(s[-k:] + s[:-k])
 
 [28. 找出字符串中第一个匹配项的下标 - 力扣（LeetCode）](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/description/)
 
+![image-20260921174851090](String.assets/image-20260921174851090.png)
+
 ### 伪代码
 
 ```python
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        if not needle:
+            return 0
 
+        def get_next(pattern):
+            # next[i]：pattern[0:i+1] 的最长相等前后缀长度
+            next_arr = [0] * len(pattern)
+            j = 0   #j是前缀的下标，也就是下面的，
+
+            for i in range(1, len(pattern)): #i是后缀的下标 也就是上面的 一定要从后缀的1开始，不然ij都从0开始就冲突了呀
+                # 当前字符无法接上，尝试更短的前缀
+                while j > 0 and pattern[i] != pattern[j]:
+                    j = next_arr[j - 1]
+
+                # 当前字符可以接上
+                if pattern[i] == pattern[j]:
+                    j += 1
+
+                next_arr[i] = j  #想想就知道 i一直在增加肯定是这个呀
+
+            return next_arr
+
+        def kmp(text, pattern, next_arr):
+            j = 0
+
+            for i in range(len(text)):
+                # 主串当前字符无法匹配，模式串回退
+                while j > 0 and text[i] != pattern[j]:
+                    j = next_arr[j - 1]          #直接从这个j开始找了，这个j是前缀和后缀相同的时候的下标的后一个
+                                                    # 比如 next_arr[j - 1]=2 那么就是前2个字符相等，下标从2开始找
+                # 当前字符匹配成功
+                if text[i] == pattern[j]:
+                    j += 1
+
+                # 模式串全部匹配
+                if j == len(pattern):
+                    return i - len(pattern) + 1
+
+            return -1
+
+        next_arr = get_next(needle)
+        return kmp(haystack, needle, next_arr)
 ```
 
 
