@@ -24,8 +24,8 @@
 
 5. ```python
      
-                                                          set 
-                                        
+                                                                                      set 
+                                                                                                                                                                
      #  set的定义方法： 
        result_set = set()       # 存放结果，自动去重
        nums_set = set(nums1)    # 将 nums1 转成集合
@@ -66,6 +66,12 @@
          seen[char]=1
        else:
       	seen[char]= seen[char]+1
+        
+        
+        
+        
+   #判断一个值是否在这里面  #这里是判断的键而不是值
+if ch in pairs: 
 ```
 
 
@@ -430,10 +436,6 @@ class Solution:
 
 
 
-
-
-
-
 # 6.四数相加
 
 
@@ -442,7 +444,7 @@ class Solution:
 
 
 
-![image-20260919192936734](hash table.assets/image-20260919192936734.png)
+![image-20260922113743095](hash table.assets/image-20260922113743095.png)
 
 ```python
 class Solution:
@@ -615,6 +617,7 @@ class Solution:
                 value=nums[i]+nums[j]
                 if j>i+1 and nums[j]==nums[j-1]:
                     continue
+                    
                 left=j+1
                 right=n-1
 

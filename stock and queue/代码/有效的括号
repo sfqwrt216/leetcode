@@ -1,0 +1,5 @@
+from collections import deque
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack=[]  # 创建一个空栈
+        mapping={")":"(","}":"{","]":"["} # 创建一个映射字典，将右括号映射到对应的左括号

@@ -22,7 +22,7 @@ print(lst[::-1]) # [4, 3, 2, 1]
    ```python
    # spilt
    字符串.split(分隔符, 最大切分次数)
-       1.不指定分隔符（不指定分隔符时，默认按照空格、多个空格、换行等空白字符切分）
+       1.不指定分隔符（不指定分隔符时，默认按照空格、多个空格、换行等空白字符切分） #spilt以单词作为一个字符
    s = "I love Python"
    result = s.split()
    print(result)#['I', 'love', 'Python']
@@ -55,6 +55,39 @@ print(lst[::-1]) # [4, 3, 2, 1]
    # 输出：
    # ['苹果', '香蕉', '西瓜']     
    # 苹果 | 香蕉 | 西瓜
+   ```
+
+
+4.常用的列表拼接方法：
+
+```python
+#  直接 password [target：] + password[:target]
+
+class Solution:
+    def dynamicPassword(self, password: str, target: int) -> str:
+        return password[target:] + password[:target]
+```
+
+4. kmp算法：
+
+   在一个字符串里面找一个字符串 ： kmp算法查找
+
+   ```python
+           def kmp(text, pattern, next_arr):
+               j = 0
+   
+               for i in range(len(text)):
+                   # 主串当前字符无法匹配，模式串回退
+                   while j > 0 and text[i] != pattern[j]:
+                       j = next_arr[j - 1]          #直接从这个j开始找了，这个j是前缀和后缀相同的时候的下标的后一个
+                                                       # 比如 next_arr[j - 1]=2 那么就是前2个字符相等，下标从2开始找
+                   # 当前字符匹配成功
+                   if text[i] == pattern[j]:
+                       j += 1
+   
+                   # 模式串全部匹配
+                   if j == len(pattern):
+                       return i - len(pattern) + 1
    ```
 
    
@@ -232,7 +265,7 @@ class Solution:
 class Solution:
     def reverseWords(self, s: str) -> str:
         s = s[::-1] #反转整个字符串
-        return ' '.join(word[::-1] for word in s.split())
+        return ' '.join(word[::-1] for word in s.split())  #然后再把word翻转出来
 ```
 
 
@@ -244,7 +277,7 @@ class Solution:
 ```python
 # spilt
 字符串.split(分隔符, 最大切分次数)
-    1.不指定分隔符（不指定分隔符时，默认按照空格、多个空格、换行等空白字符切分）
+    1.不指定分隔符（不指定分隔符时，默认按照空格、多个空格、换行等空白字符切分）          #spilt以单词作为一个字符
 s = "I love Python"
 result = s.split()
 print(result)#['I', 'love', 'Python']
@@ -298,7 +331,8 @@ print(result)
 ### 伪代码
 
 ```python
-#第一种办法： 翻转整个字符串，再把前面的翻转，再把target翻转，注意这个下标
+#第一种办法： 翻转三次字符串
+#翻转整个字符串，再把前面的翻转，再把target翻转，注意这个下标
 class Solution:
     def dynamicPassword(self, password: str, target: int) -> str:
 
@@ -362,7 +396,7 @@ class Solution:
 k = int(input())
 s = input()
 
-print(s[-k:] + s[:-k])
+print(s[-k:] + s[:-k]) #这个是啥意思？
 
 
 #第二种方法：三次翻转字符串  和上一题动态口令一致
@@ -375,8 +409,6 @@ print(s[-k:] + s[:-k])
 ### 易错点：
 
 
-
-s
 
 
 
@@ -440,17 +472,49 @@ class Solution:
 
 ### 易错点：
 
+![image-20260921233726013](String.assets/image-20260921233726013.png)
 
+![image-20260921235100260](String.assets/image-20260921235100260.png)
 
 # 8.重复的子字符串
 
 [459. 重复的子字符串 - 力扣（LeetCode）](https://leetcode.cn/problems/repeated-substring-pattern/description/)
 
-
+![image-20260922210329288](String.assets/image-20260922210329288.png)
 
 ### 伪代码
 
 ```python
+# 第一种写法  KMP算法 
+class Solution:
+    def repeatedSubstringPattern(self, s: str) -> bool:
+        def get_next(pattern):
+            next_arr = [0] * len(pattern)
+            j = 0
+
+            for i in range(1, len(pattern)):
+                while j > 0 and pattern[i] != pattern[j]:
+                    j = next_arr[j - 1]
+
+                if pattern[i] == pattern[j]:
+                    j += 1
+
+                next_arr[i] = j
+
+    
+
+        next_arr = get_next(s)
+########################################### 到这里上面都是getnext算法###################
+        n = len(s) 
+        longest = next_arr[-1] #next_arr【-1】就是最后一个数值 【0,0,0,1,2,3,4,5,6,】   
+        period = n - longest        #那就是要找到有多少个0就是重复子串 
+
+        return longest > 0 and n % period == 0
+    
+ 
+# 第二种写法  
+
+
 
 ```
 

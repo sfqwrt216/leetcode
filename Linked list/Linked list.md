@@ -1,10 +1,10 @@
 # 列表
 
-列表也是从下标0开始的
+1.列表也是从下标0开始的
 
-虚拟头结点：创建了虚拟头结点就是要用来返回，dumy.next的，虚拟头结点就是为了单独处理这个头结点的，如果不设置虚拟头结点那么你第一个值怎么去执行
+2.虚拟头结点：创建了虚拟头结点就是要用来返回，dumy.next的，虚拟头结点就是为了单独处理这个头结点的，如果不设置虚拟头结点那么你第一个值怎么去执行
 
-交换原则：交换的原则其实就是被赋值的再去给别人赋值就很不正确
+3.交换原则：交换的原则其实就是被赋值的再去给别人赋值就很不正确
 
 ```python
         #开始交换
@@ -13,7 +13,7 @@
         present.next=behind.next  
 ```
 
-python的and ： 先处理左边满足才会处理右边
+4.python的and ： 先处理左边满足才会处理右边
 
 ![image-20260917224118637](Linked list.assets/image-20260917224118637.png)
 
@@ -385,7 +385,7 @@ class Solution:
 ### 伪代码
 
 ```python
-# Definition for singly-linked list.
+# Definition for singly-linked list.     这一题主要就是数学的思维
 # class ListNode:
 #     def __init__(self, x):
 #         self.val = x
@@ -438,7 +438,7 @@ class Solution:
 
 ```python
 # Definition for singly-linked list.
-# class ListNode:
+# class ListNode:                             这题也还是数学的思维
 #     def __init__(self, x):
 #         self.val = x
 #         self.next = None
@@ -454,7 +454,7 @@ class Solution:
             fast=fast.next.next
             slow=slow.next
 
-            if fast==slow:#相遇 slow马上回头结点
+            if fast==slow:# 在环内相遇 slow马上回头结点 fast在相遇点继续走但是速度变成slow
                 slow=head
 
                 while slow!=fast:
@@ -480,3 +480,5 @@ class Solution:
 
 
 ![image-20260917223857906](Linked list.assets/image-20260917223857906.png)
+
+![image-20260922103704676](Linked list.assets/image-20260922103704676.png)
