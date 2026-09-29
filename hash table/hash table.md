@@ -50,16 +50,13 @@
 
 ```python
  											dict (map)
-  #字典的定义方法：
-  seen= dict()
+
+d = {}            #dict字典的定义方法：
+d = dict()        #dict字典的定义方法：
  
-# map or dict 添加数字的方法
- seen.add(i,nums[i])  #❌️ 字典没有这样定义的add
-    
- seen[nums[i]]=i   # ✅️ 直接这样加
+seen[nums[i]]=i   # ✅️ 直接这样加
 
-
-# map给数值的方法 不能直接	seen[char]+= 1 因为如果之前没有这个字典的话，就根本找不到
+# map给数值的方法 不能直接	seen[char]+= 1 因为如果之前没有这个字典的话，就根本找不到  defaultdict就是解决这个问题
  seen=dict()
    for char in magazine:
      if char not in seen:
@@ -69,9 +66,20 @@
         
         
         
-        
-   #判断一个值是否在这里面  #这里是判断的键而不是值
-if ch in pairs: 
+    
+    
+mymap.items()#mymap.items():返回mymap的键值对
+
+											defaultdict（int）
+    												字典基础
+q = defaultdict(int)	 #初始化的时候要用int放到括号里
+q[i]+=1					#这样去赋值
+if ch in pairs:          #判断一个值是否在这里面  #这里是判断的键而不是值
+pairs.keys()             # 所有键
+pairs.values()           # 所有值
+pairs.items()            # 所有 (键, 值) 二元组
+for key, value in pairs.items():  #遍历二元组
+    print(key, value)
 ```
 
 
