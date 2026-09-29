@@ -72,7 +72,7 @@
 
 
 
-![image-20260928162830390](stock and queue.assets/image-20260928162830390.png)
+![image-20260929201114946](./assets/image-20260929201114946.png)
 
 ### 伪代码
 
@@ -172,7 +172,7 @@ empty实现：直接判断即可
 
 [225. 用队列实现栈 - 力扣（LeetCode）](https://leetcode.cn/problems/implement-stack-using-queues/description/)
 
-![image-20260928174933822](stock and queue.assets/image-20260928174933822.png)
+![image-20260929201147061](./assets/image-20260929201147061.png)
 
 ### 伪代码
 
@@ -270,9 +270,9 @@ return self.queue[0]
 
 [20. 有效的括号 - 力扣（LeetCode）](https://leetcode.cn/problems/valid-parentheses/description/)
 
-![image-20260928191828720](assets/image-20260928191828720.png)
 
 
+![image-20260929201209756](./assets/image-20260929201209756.png)
 
 ### 伪代码
 
@@ -395,7 +395,7 @@ if ch in pairs: #这里是判断的键而不是值
 
 
 
-![image-20260928205336646](assets/image-20260928205336646.png)
+![image-20260929201229943](./assets/image-20260929201229943.png)
 
 
 
@@ -450,7 +450,7 @@ class Solution:
 
 [150. 逆波兰表达式求值 - 力扣（LeetCode）](https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/)
 
-
+![image-20260929201247050](./assets/image-20260929201247050.png)
 
 ### 伪代码
 
@@ -538,7 +538,7 @@ lambda：定义一个短小的函数懒得再去定义函数了
 
 [239. 滑动窗口最大值 - 力扣（LeetCode）](https://leetcode.cn/problems/sliding-window-maximum/)
 
-![image-20260929155221867](assets/image-20260929155221867.png)
+![image-20260929201309874](./assets/image-20260929201309874.png)
 
 ### 伪代码
 
@@ -629,7 +629,7 @@ class Solution:
 
 [347. 前 K 个高频元素 - 力扣（LeetCode）](https://leetcode.cn/problems/top-k-frequent-elements/description/)
 
-![image-20260929163640985](assets/image-20260929163640985.png)
+![image-20260929201343314](./assets/image-20260929201343314.png)
 
 
 
