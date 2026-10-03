@@ -14,6 +14,8 @@
 
 ## 1.斐波那契数  
 
+https://leetcode.cn/problems/fibonacci-number/
+
 ![image-20260922160931702](DP.assets/image-20260922160931702.png)
 
 
@@ -33,15 +35,19 @@ class Solution:
         
         
 xxxxxx代码法：
-		def : fib(N):
-			dp[0]=0
-            dp[1]=1
-            for i in range(2,N+1):
-                dp[i]=dp[0]+d[1]
-                dp[0]=dp[1]
-                dp[1]=dp[i]
-                
-             return dp[i]
+class Solution:
+    def fib(self, n: int) -> int:
+        if n < 2:
+            return n
+            
+        dp = [0] * 30
+        dp[0] = 0
+        dp[1] = 1
+        for i in range(2, n + 1):
+            # 正确的滚动更新
+            dp[0], dp[1] = dp[1], dp[0] + dp[1]
+            
+        return dp[1] # 注意：算到最后，结果存在 dp[1] 里
 ```
 
 ### 思路：
@@ -62,7 +68,7 @@ xxxxxx代码法：
 
 ## 爬楼梯
 
-
+[70. 爬楼梯 - 力扣（LeetCode）](https://leetcode.cn/problems/climbing-stairs/description/)
 
 ![image-20260922161500270](DP.assets/image-20260922161500270.png)
 
@@ -99,4 +105,29 @@ xxxxx 递归法
 
 ## 最小花费爬楼梯
 
-![image-20260922163636130](DP.assets/image-20260922163636130.png)
+![image-20260929201511148](./assets/image-20260929201511148.png)
+
+### 伪代码
+
+```python
+
+```
+
+
+
+### 思路 
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错

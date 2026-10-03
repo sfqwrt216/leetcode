@@ -26,6 +26,7 @@
    # ===== queue：单向（FIFO）=====
    
    q = deque()  #队列定义
+   q =deque([root]) #也可以这样定义
    q.append(1)  # 只能从尾部入队
    q.popleft()  # 1，只能从头部出队
    q[0]      	 # 2，看队头
