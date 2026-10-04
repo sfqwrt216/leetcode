@@ -10,6 +10,10 @@
 
 3.确定单层递归逻辑
 
+### 迭代法
+
+迭代法基本都是用的栈执行的，不管是统一迭代法还是啥都是这样
+
 
 
 ## 二叉树的前序遍历（前-中-后这个顺序写迭代）
@@ -53,12 +57,7 @@ class Solution:
     
     
     										迭代法
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+
 class Solution:
     def preorderTraversal(self, root: TreeNode) -> List[int]:
 
@@ -73,6 +72,35 @@ class Solution:
             node=stack.pop()
             node=node.right
         return result
+    
+    									统一迭代法（之后的前中后序都是用的这个方法仅改变入栈的顺序即可）
+class Solution:
+    def preorderTraversal(self, root: TreeNode) -> List[int]:
+        result = []
+        stack = []
+
+        if root :
+            stack.append(root)
+     
+        while stack:
+            node=stack[-1]
+
+            if node is not None:
+                node=stack.pop()  #为什么这里要弹出来，是因为他还有左右节点要放进去
+
+                if node.right:
+                    stack.append(node.right)
+                if node.left:
+                    stack.append(node.left)
+                stack.append(node)  #在中节点加入None去判断
+                stack.append(None)
+
+            else:
+                stack.pop()
+                node=stack.pop()
+                result.append(node.val)
+        return result
+        
 
 ```
 
@@ -83,6 +111,8 @@ class Solution:
 递归法：就是把根节点传进去然后直接递归左右  注意里面的顺序，中 左 右 
 
 迭代法： 要用一个stack栈去存储当前的中间节点         node去遍历一直作为中间节点
+
+统一迭代法： 加入None指针去判断什么时候处理中序  并且入栈的时候是因为 要前序-----中左右  所以入栈的时候就是右左中 去入栈  
 
 ****
 
@@ -162,7 +192,36 @@ class Solution:
 
 
             
+											统一迭代法
 
+class Solution:
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        result = []
+        stack = []
+
+        if root :
+            stack.append(root)
+     
+        while stack:
+            node=stack[-1]
+
+            if node is not None:
+                node=stack.pop()  #为什么这里要弹出来，是因为他还有左右节点要放进去
+                stack.append(node)  #在中节点加入None去判断
+                stack.append(None)
+
+                if node.right:
+                    stack.append(node.right)
+                    
+                if node.left:
+                    stack.append(node.left)
+
+
+            else:
+                stack.pop()
+                node=stack.pop()
+                result.append(node.val)
+        return result
 
 ```
 
@@ -173,6 +232,10 @@ class Solution:
 递归法：没有任何技巧可言
 
 迭代法：看似很难其实一步一步写出来还挺简单的，主要是边想着二叉树边动手的话还挺快的，首先先一直往左遍历，然后判断是否有右节点，有的话就是else里面的内容：再进行遍历，直到没有右节点以及左节点的时候，就存到result当中国，！！！！pre=node！！！pre赋值为当前节点，node=none不然中间节点又去遍历左节点了，然后node.right遍历过了或者没有右节点的时候，就直接存下来
+
+
+
+统一迭代法： 加入None指针去判断什么时候处理中序  并且入栈的时候是因为 要后序-----左右中  所以入栈的时候就是中右左 去入栈  
 
 ****
 
@@ -211,12 +274,7 @@ class Solution:
 
 ```python
 										递归法
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+
 class Solution:
     def inorderTraversal(self, root: TreeNode | None) -> list[int]:
         result=[]          #中序：中左右
@@ -235,12 +293,7 @@ class Solution:
         
         
         								迭代法
-  # Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+
 class Solution:
     def inorderTraversal(self, root):
         result = []
@@ -256,7 +309,41 @@ class Solution:
             node = node.right           # 转右
 
         return result  
+    
+    
+    
+    
+    							统一迭代法
 
+class Solution:
+    def inorderTraversal(self, root):
+        result = []
+        stack = []
+
+        if root :
+            stack.append(root)
+     
+        while stack:
+            node=stack[-1]
+
+            if node is not None:
+                node=stack.pop()  #为什么这里要弹出来，是因为他还有左右节点要放进去
+
+                if node.right:
+                    stack.append(node.right)
+
+                stack.append(node)  #在中节点加入None去判断
+                stack.append(None)
+
+                if node.left:
+                    stack.append(node.left)
+            else:
+                stack.pop()
+                node=stack.pop()
+                result.append(node.val)  #重新入栈加入到结果集
+        return result
+        
+        
 ```
 
 
@@ -265,7 +352,7 @@ class Solution:
 
 递归法：和前序的dp差不多只是换了代码顺序
 
-迭代法： 
+统一迭代法： 加入None指针去判断什么时候处理中序  并且入栈的时候是因为 要中序-----左中右 所以入栈的时候就是右中左去入栈  
 
 ****
 
