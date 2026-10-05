@@ -10,9 +10,36 @@
 
 3.确定单层递归逻辑
 
+
+
 ### 迭代法
 
 迭代法基本都是用的栈执行的，不管是统一迭代法还是啥都是这样
+
+
+
+
+
+
+
+```python
+3.        depth = 1 + max(child_result, default=0) 
+#要是直接max的话会出现child_result 为0的时候，max就不行了，但是如果加一个加一个默认值 default=0即可
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -612,8 +639,9 @@ class Solution:
 ### 知识点：
 
 ```python
- 
-
+                 if cur.children:
+                    for child in cur.children: #children是list类型要去遍历他
+                        que.append(child)
 ```
 
 
@@ -842,6 +870,8 @@ class Solution:
 ### 伪代码
 
 ```python
+													1.层序遍历求解
+
 # Definition for a binary tree node.
 # class TreeNode:
 #     def __init__(self, val=0, left=None, right=None):
@@ -864,13 +894,37 @@ class Solution:
                 if cur.right:
                     que.append(cur.right)
         return size
+    	
+        
+        												2.递归遍历求解
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+    def getdepth(self, root: TreeNode | None)->int :
+        if not root :   return 0
+        left_depth=self.getdepth(root.left)
+        right_depth=self.getdepth(root.right)
+        depth=1+max(left_depth,right_depth)
+        return depth
+
+    def maxDepth(self, root: TreeNode | None) -> int:
+
+        return self.getdepth(root)
+
 ```
 
 
 
 ### 思路 
 
-用一个size记录每一层循环的次数即可
+层序遍历法：用一个size记录每一层循环的次数即可
+
+递归遍历法：  可以直接想象最小的二叉树【1,2,3】 然后模拟出来是1+max(left_depth,right_depth)
 
 ****
 
@@ -902,6 +956,7 @@ class Solution:
 ### 伪代码
 
 ```python
+											1.层序法
 # Definition for a binary tree node.
 # class TreeNode:
 #     def __init__(self, val=0, left=None, right=None):
@@ -926,13 +981,43 @@ class Solution:
                 if not cur.left and not cur.right:
                     return minsize
         return minsize
+    
+    
+    									2.递归法
+
+class Solution:
+
+
+    def minDepth(self, root: TreeNode | None) -> int:
+        if not root:
+            return 0
+        #1. 左右节点都不存在
+        if not root.left and not root.right:
+            return 1
+        #2. 左节点不存在 右节点存在
+        if not root.left: 
+            return 1+self.minDepth(root.right)
+        #3.右节点不存在，左节点存在
+        if not root.right: 
+            return self.minDepth(root.left )
+
+        #4.左右节点都存在
+        minleft=self.minDepth(root.left)
+        minright=self.minDepth(root.right)
+        depth=1+min(minleft,minright)
+
+        return depth
 ```
 
 
 
 ### 思路 
 
-和之前一样，只不过是左右节点都没有的时候直接return minsize即可
+1.最小深度的条件一定是左右节点都不存在，此时才是最小深度，当左右节点有一个存在的话，就不是最小深度了
+
+2.和之前一样，只不过是左右节点都没有的时候直接return minsize即可
+
+3.递归法的时候要root.left的时候一定要先分情况判断，不然会出现不存在left的情况
 
 ****
 
@@ -1144,6 +1229,8 @@ class Solution:
         if not root:
             return root
         return self.compare(root.left,root.right)
+    
+    
     						2.层序遍历法
         # Definition for a binary tree node.
 # class TreeNode:
@@ -1166,7 +1253,7 @@ class Solution:
                     que.append(cur.left)  #不管是不是空全部加进去
                     que.append(cur.right)
                 else :
-                    leaf.append(None)    #这一层leaf也要加入空节点进去
+                    leaf.append(None)    #这一层leaf也要加入空节点进去     ，并不需要他的左右子节点是不是空，因为不管一个还是两个，都是要对称的
             if leaf!=leaf[::-1]:
                 return  False
         return True
@@ -1198,6 +1285,322 @@ class Solution:
 
 
 
+## N叉树的最大深度
+
+![image-20261005142605534](./assets/image-20261005142605534.png)
+
+
+
+
+
+### 伪代码
+
+```python
+										1.层序迭代法
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: Optional[int] = None, children: Optional[List['Node']] = None):
+        self.val = val
+        self.children = children
+"""
+
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        if not root:
+            return 0  #注意这里是返回的二叉树的大小，返回root是没用的
+        que=deque([root])
+        size=0
+
+        while que:
+            size+=1
+            leaf=[]
+            for _ in range(0,len(que)):
+                cur=que.popleft()
+                if cur.children:  #如果存在才能遍历，这点很重要的
+                    for child in cur.children:
+                        que.append(child)
+        return size
+    
+    
+    											2.我自己的递归写法
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: Optional[int] = None, children: Optional[List['Node']] = None):
+        self.val = val
+        self.children = children
+"""
+
+class Solution:
+    def getdepth(self,root:'Node') ->int:
+        if not root:
+            return 0
+        child_result=[]
+        if root.children:
+            for child in root.children:
+                child_result.append(self.getdepth(child))
+        depth = 1 + max(child_result, default=0)
+        return depth
+
+    def maxDepth(self, root: 'Node') -> int:
+        
+        return self.getdepth(root)
+    									3.简化后的版本： 直接把自己当做递归函数即可
+        
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        if not root:
+            return 0
+        child_result=[]
+        if root.children:
+            for child in root.children:
+                child_result.append(self.maxDepth(child))
+        depth = 1 + max(child_result, default=0)
+        return depth
+    
+    
+    
+    									4.题解的写法
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        if not root:
+            return 0
+            
+        depth = 0
+        if root.children:  # 加个判断防止 children 是 None
+            for child in root.children:
+                depth = max(depth, self.maxDepth(child))  #循环去打擂台避免了list列表的开销
+
+        return depth + 1
+```
+
+
+
+### 思路 
+
+1.层序迭代法就和原来的一样的，加个size标记即可
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 1.这道题是返回int   在if not root的时候 要return 0   而不是return root
+ 
+2.                 if cur.children:  #如果存在才能遍历，这点很重要的
+                    for child in cur.children:
+                        que.append(child)      #并且是这样遍历的child  因为是list类型
+
+                
+                
+                
+                
+3.        depth = 1 + max(child_result, default=0) 
+#要是直接max的话会出现child_result 为0的时候，max就不行了，但是如果加一个加一个默认值 default=0即可
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 完全二叉树的节点个数
+
+[222. 完全二叉树的节点个数 - 力扣（LeetCode）](https://leetcode.cn/problems/count-complete-tree-nodes/)
+
+![image-20261005154533038](./assets/image-20261005154533038.png)
+
+
+
+### 伪代码
+
+```python
+										1.普通的迭代遍历 --但是超出时间限制了
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        size=0
+        if not root:
+            return size
+        que=deque([root])
+        while que:
+
+            for _ in range(0,len(que)):
+                cur=que.popleft()
+                size+=1
+                if cur.left:
+                    que.append(cur.left)
+                if cur.right:
+                    que.append(cur.right)
+        return size
+									
+        								2.普通的递归遍历--也超出了时间限制
+class Solution:
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        leftNum = self.countNodes(root.left)
+        rightNum = self.countNodes(root.right)
+        
+        treeNum = leftNum + rightNum + 1
+        
+        return treeNum    
+    
+    
+    									3.高级递归--满二叉树
+class Solution:
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        
+## 从这里开始就是为了节约时间复杂度而执行的满二叉树的判定
+        left_length=1
+        right_length=1
+
+        left=root.left
+        right=root.right
+
+        while left:  # 1. 求左子树深度 (一直往左走)
+            left=left.left
+            left_length+=1
+        while right: # 2. 求右子树深度 (一直往右走)
+            right=right.right
+            right_length+=1
+
+        if right_length==left_length:
+            return (2** left_length)-1
+## 从这里结束就是为了节约时间复杂度而执行的满二叉树的判定
+
+        #  如果不是满二叉树，递归计算左右子树，并加上当前节点
+        leftnum=self.countNodes(root.left)
+        rightnum=self.countNodes(root.right)
+
+        return leftnum+rightnum+1
+
+
+```
+
+
+
+### 思路 
+
+主要就是要利用完全二叉树的特性，去节约时间成本，判断是否从这个节点开始是满二叉树，是的话后面的节点都不需要去遍历了
+
+！！！判断是否是满二叉树：因为本来就是完全二叉树，所以只需要判断一直往左走和一直往右走的深度是不是一致的
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+        # 获取左右孩子节点（用于后续遍历）
+        left = root.left
+        right = root.right
+        
+        leftDepth = 0
+        rightDepth = 0
+        
+        # 1. 求左子树深度 (一直往左走)
+        while left:
+            left = left.left
+            leftDepth += 1
+        # 2. 求右子树深度 (一直往右走)
+        while right:
+            right = right.right
+            rightDepth += 1
+        if leftDepth == rightDepth:
+            return (2 ** (leftDepth + 1)) - 1
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+## 平衡二叉树
+
+![image-20261005211137349](./assets/image-20261005211137349.png)
+
+[110. 平衡二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/balanced-binary-tree/)
+
+
+
+### 伪代码
+
+```python
+											1.递归剪枝法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+    def getHeight(self, root: TreeNode | None)->int:
+        if not root:
+            return 0
+
+        leftHeight=self.getHeight(root.left)
+        if leftHeight == -1:        #提前剪枝免得全部遍历
+            return -1
+
+        rightHeight=self.getHeight(root.right)
+        if rightHeight == -1:           #如果有一个地方不平衡马上进行拦截不要再继续算了
+            return -1
+
+        if abs(rightHeight-leftHeight) >1:
+            return -1
+        else:
+            return 1 + max(leftHeight, rightHeight) #记录这个高度是因为此时也只是一边的子树而已，
+                                                    #代码这这一边的高度，还要和另一边的高度相比呢
+                                                    #max是因为要记录的是高度所以要最高的
+
+
+    def isBalanced(self, root: TreeNode | None) -> bool:
+
+        if self.getHeight(root)== -1:
+            return False
+        else :
+            return True
+```
+
+
+
+### 思路 
+
+1.当高度不一致时直接return -1去剪枝  ，  如果检测到了有-1的存在，直接进行剪枝即可（递归我还是不是很懂的感觉）
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
 
 
 
@@ -1206,3 +1609,91 @@ class Solution:
 
 
 
+
+## 二叉树的所有路径
+
+[257. 二叉树的所有路径 - 力扣（LeetCode）](https://leetcode.cn/problems/binary-tree-paths/)
+
+![image-20261005221532612](./assets/image-20261005221532612.png)
+
+
+
+### 伪代码
+
+```python
+ 										1.迭代法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def binaryTreePaths(self, root: TreeNode | None) -> list[str]:
+        if not root:
+            return []
+        result=[]  #用来储存所有路径的结果
+        stack=[(root,str(root.val))]  #定义了一个元组的栈
+
+        while stack:
+            
+            cur,path=stack.pop()
+
+            if not cur.left and not cur.right:
+                result.append(path)
+            
+            if cur.left:
+                stack.append((cur.left,path+"->"+str(cur.left.val)))
+            if cur.right:
+                stack.append((cur.right,path+"->"+str(cur.right.val)))
+
+        return result
+    
+    								2.递归遍历法
+
+class Solution:
+    def traversal(self,cur: TreeNode ,result:list[str],path ):
+        path+=str(cur.val)
+
+        if not cur.left and not cur.right:
+            result.append( path)
+
+        if cur.left:
+            self.traversal(cur.left,result,path+"->")
+        if cur.right:
+            self.traversal(cur.right,result,path+"->")
+        
+        
+    def binaryTreePaths(self, root: TreeNode | None) -> list[str]:
+        if not root:
+            return root
+        result=[]
+        path=""
+
+        self.traversal(root,result,path)
+        return result
+```
+
+
+
+### 思路 
+
+迭代法：用当前的cur，path存入stack当中，把path一起打包带走到stack， 到他的叶子结点就一直加入到path当中即可
+
+递归法：传入三个参数，当前节点，结果集result，路径path   ，没有左右节点的时候直接把当前结果加入结果集，不然就一直遍历
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+stack=[(root,str(root.val))]  #定义了一个元组的栈  这样就相当于吧root和str（val） 都存入了stack当中
+
+```
+
+
+
+### 重写一遍之后还会犯的错
