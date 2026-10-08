@@ -16,12 +16,6 @@
 
 迭代法基本都是用的栈执行的，不管是统一迭代法还是啥都是这样
 
-
-
-
-
-
-
 ```python
 3.        depth = 1 + max(child_result, default=0) 
 #要是直接max的话会出现child_result 为0的时候，max就不行了，但是如果加一个加一个默认值 default=0即可
@@ -31,13 +25,9 @@
 
 
 
-
-
-
-
-
-
-
+```python
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:  #optional的意思是要不就是 TreeNode要不就是None
+```
 
 
 
@@ -1691,6 +1681,465 @@ class Solution:
 ```python
  
 stack=[(root,str(root.val))]  #定义了一个元组的栈  这样就相当于吧root和str（val） 都存入了stack当中
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+## 左子叶之和
+
+![image-20261008192522714](./assets/image-20261008192522714.png)
+
+[404. 左叶子之和 - 力扣（LeetCode）](https://leetcode.cn/problems/sum-of-left-leaves/)
+
+### 伪代码
+
+```python
+ 										1.递归法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:  #获取以这棵树为根的左子叶之和
+        if not root:
+            return 0
+
+        leftvalue=0
+        
+        if root.left and  not root.left.left and not root.left.right:  #判断是不是左叶子
+                leftvalue= root.left.val 
+        else:
+                leftvalue=self.sumOfLeftLeaves(root.left)
+
+        
+        rightvalue=self.sumOfLeftLeaves(root.right)
+
+        return leftvalue+rightvalue
+
+    										2.迭代法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:  #获取以这棵树为根的左子叶之和
+        if not root:
+            return 0
+        stack=[root]
+        result=0
+        while stack:
+            cur=stack.pop()
+
+            if cur.left and not cur.left.left and not cur.left.right:#是左叶子就加了这一行而已
+                result+=cur.left.val
+
+            if cur.left:
+                stack.append(cur.left)
+            if cur.right:
+                stack.append(cur.right)                
+        return result
+
+```
+
+
+
+### 思路 
+
+递归法:    一定要注意，递归的核心就是把他当做黑盒子， sumOfLeftLeaves 就是用来拿以这棵树为根的左子叶之和
+
+  if root.left: 和  if not root.left.left and not root.left.right: 就是说明这个root。left就是左叶子了
+
+
+
+迭代法：就一直和之前一样stack然后加起来result然后 进行一个结果判断即可
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+
+
+## 找树左下角的值
+
+[513. 找树左下角的值 - 力扣（LeetCode）](https://leetcode.cn/problems/find-bottom-left-tree-value/description/)
+
+![image-20261008194847525](./assets/image-20261008194847525.png)
+
+### 伪代码
+
+```python
+									1.层序法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def findBottomLeftValue(self, root: TreeNode | None) -> int:
+        if not root:
+            return 0
+        
+        que=deque([root])
+
+        while que:
+            leaf=[]
+            for _ in range(0,len(que)):
+                cur=que.popleft()
+                leaf.append(cur.val)
+                if cur.left:
+                    que.append( cur.left)
+                if cur.right:
+                    que.append(cur.right)
+        return leaf[0]
+    
+    										2.递归法
+class Solution:
+    def traversal(self,root,depth):
+
+        if not root:
+            return
+        if not root.left and not root.right:
+            if  depth>self.maxdepth:
+                self.maxdepth = depth
+                self.result = root.val
+                return
+
+        if root.left:
+            self.traversal(root.left,depth+1)
+        if root.right:
+            self.traversal(root.right,depth+1)
+    
+
+    def findBottomLeftValue(self, root: TreeNode | None) -> int:
+        self.maxdepth=-1
+        self.result=0
+        self.traversal(root,0)
+        return self.result
+```
+
+
+
+### 思路 
+
+1.层序法： 直接层序法然后return leaaf【0】即可
+
+2.递归法 ：定义全局maxdepth和result 然后一直遍历一下 ，最终没有左右节点的时候，说明可以更改一下maxdepth和result的值了
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 112路径总和
+
+![image-20261008202740962](./assets/image-20261008202740962.png)
+
+[112. 路径总和 - 力扣（LeetCode）](https://leetcode.cn/problems/path-sum/description/)
+
+
+
+### 伪代码
+
+```python
+										1.迭代法
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def hasPathSum(self, root: TreeNode | None, targetSum: int) -> bool:
+        if not root:
+            return False
+        stack=[(root,root.val)] 
+
+        while stack:
+
+            cur,sum=stack.pop()
+            if not cur.left and not cur.right:
+                if sum==targetSum:
+                    return True
+            if cur.left:
+                stack.append((cur.left,sum+cur.left.val))  #这个sum+cur.left.val非常的有回溯效果
+     
+            if cur.right:
+                stack.append((cur.right,sum+cur.right.val))
+        return False
+    
+    
+    									2.递归法
+class Solution:
+    def traversal(self,root,sum,targetSum):
+        if not root:
+            return False
+
+        if not root.left and not root.right:#到达了根节点
+            if sum==targetSum:
+                return True
+            else: 
+                return False
+
+        if root.left:
+            if self.traversal(root.left,sum+root.left.val,targetSum):
+                return True
+
+        if root.right:
+            if self.traversal(root.right,sum+root.right.val,targetSum):
+                return True
+
+        return False
+
+    def hasPathSum(self, root: TreeNode | None, targetSum: int) -> bool:
+        if not root:
+            return False
+
+        
+        return self.traversal(root,root.val,targetSum)
+```
+
+
+
+### 思路 
+
+1.迭代法和19题二叉树的所有路径一样，用元组存起来然后加起来判断即可
+
+2.自己写的时候少了这几个if和return false还是return true ，一定要记得向上反馈，没有把消息传出来
+
+****
+
+### 易错点：
+
+```python
+                stack.append((cur.left,sum+cur.left.val))  
+    #这里的sum不会去累加因为sum的值只停留在这一层了 ，自带回溯效果
+```
+
+
+
+### 知识点：
+
+```python
+      1.   stack=[(root,root.val)]   用元组把root和当前sum存起来
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 113路径总和II
+
+[113. 路径总和 II - 力扣（LeetCode）](https://leetcode.cn/problems/path-sum-ii/)
+
+![image-20261008210611991](./assets/image-20261008210611991.png)
+
+
+
+### 伪代码
+
+```python
+											1.迭代法
+class Solution:
+    def pathSum(self, root: TreeNode | None, targetSum: int) -> list[list[int]]:
+        if not root:
+            return []
+
+        result=[]
+        path=[]
+        path.append(root.val)
+        stack=[(root,root.val,path)]
+
+        while stack:
+
+            cur,sum,path=stack.pop()
+            if not cur.left and not cur.right:
+                if sum==targetSum:
+                    result.append(path)
+
+            if cur.left:
+                new_path=path + [cur.left.val] 
+                stack.append((cur.left,sum+cur.left.val,new_path))
+            if cur.right:
+                new_path=path + [cur.right.val] 
+                stack.append((cur.right,sum+cur.right.val,new_path))     
+
+        return result
+    
+    
+    										2.递归法
+
+class Solution:
+
+    def traversal(self,root,result,path,sum,targetSum):
+
+        if not root.left and not root.right:
+            if sum==targetSum:
+                result.append(path)
+
+        if root.left:
+            new_path=path+[root.left.val]
+            self.traversal(root.left,result,new_path,sum+root.left.val,targetSum)
+            
+        if root.right:
+            new_path=path+[root.right.val]
+            self.traversal(root.right,result,new_path,sum+root.right.val,targetSum)           
+
+
+    def pathSum(self, root: TreeNode | None, targetSum: int) -> list[list[int]]:
+        if not root:
+            return []
+        result=[]
+        path=[root.val]
+
+        self.traversal(root,result,path,root.val,targetSum)
+        return result
+```
+
+
+
+### 思路 
+
+1.迭代法：注意无论是sum还是path都是要把当前值不要传到下一个里面影响了，因为左右节点都要加进去计算的
+
+2.递归法：和迭代法一样注意他的sum和path的值不要改变
+
+****
+
+### 易错点：
+
+```python
+要保证该层的不要被更改 path以及sum都是这样的
+```
+
+
+
+### 知识点：
+
+```python
+ stack.append((cur.left, sum+cur.left.val, path.append(cur.left.val)))   #原来 25 26 行我是这样写的
+   '''
+错误点 1：path.append(...) 的返回值是 None
+
+错误点 2：路径列表被“共享”了（隐蔽的逻辑错误）
+这就是为什么我之前一直强调：一定要用 path + [新值] 生成一个新列表，而不是 path.append(...)。   
+   
+   '''
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+
+
+## 106从中序和后续遍历序列构造二叉树
+
+[106. 从中序与后序遍历序列构造二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+
+![image-20261008215900632](./assets/image-20261008215900632.png)
+
+
+
+### 伪代码
+
+```python
+
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        # 递归中止条件：树为空
+        if not inorder or not postorder:
+            return None
+
+        # 根节点的值为后序遍历的最后一个元素值
+        rootVal = postorder[-1]
+        # 创建根节点
+        root = TreeNode(rootVal)
+
+        # 用根节点的值去中序数组中查找对应元素下标
+        midIndex = inorder.index(rootVal)
+
+        # 找出中序遍历的左子树和右子树
+        # 左子树区间为 [0,midIndex),右子树区间为[midIndex+1，n-1]
+        inorderLeft = inorder[:midIndex]
+        inorderRight = inorder[midIndex + 1:]
+
+        # 找出后序遍历的左子树和右子树
+        # 后序遍历和中序遍历的左子树和右子树长度相等，所以可以通过中序遍历左右子树的长度来确定后序遍历左右子树的位置
+        postorderLeft = postorder[: len(inorderLeft)]
+        postorderRight = postorder[len(inorderLeft): len(inorder) - 1]
+
+        # 递归遍历左子树
+        root.left = self.buildTree(inorderLeft, postorderLeft)
+        # 递归遍历右子树
+        root.right = self.buildTree(inorderRight, postorderRight)
+
+        return root
+
+```
+
+
+
+### 思路 
+
+用后序确定根节点，然后用中序把他们分开，然后就知道根节点的左子树和右子树， 用后序根据长度也确定左子树和右子树 ，然后继续递归
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
 
 ```
 
