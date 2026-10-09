@@ -33,6 +33,11 @@
 
 
 
+```python
+   #如果像这样分函数写的话 ，nums需要调用  ，这样才是全局nums
+self.nums=nums
+```
+
 ## 二叉树的前序遍历（前-中-后这个顺序写迭代）
 
 [144. 二叉树的前序遍历 - 力扣（LeetCode）](https://leetcode.cn/problems/binary-tree-preorder-traversal/description/)
@@ -330,7 +335,7 @@ class Solution:
     
     
     
-    							统一迭代法
+    							统一迭代法  ： 中序-左中右 ，stack里面右中左
 
 class Solution:
     def inorderTraversal(self, root):
@@ -369,7 +374,19 @@ class Solution:
 
 递归法：和前序的dp差不多只是换了代码顺序
 
-统一迭代法： 加入None指针去判断什么时候处理中序  并且入栈的时候是因为 要中序-----左中右 所以入栈的时候就是右中左去入栈  
+统一迭代法： 加入None指针去判断什么时候处理中序，到最后一个左叶子节点的时候，他还是中序的，然后加入none之后 pop出来了，再加入到result中  并且入栈的时候是因为 要中序-----左中右 所以入栈的时候就是右中左去入栈  （我怎么感觉这样说有点不清楚）
+
+**1. 入栈顺序（为什么是右中左）：**
+因为栈是“后进先出”（LIFO）的结构，而中序遍历要求“左中右”的输出顺序。为了保证左节点最先被处理，我们在将当前节点弹出后，必须按照 **右子树 → 当前节点 → 左子树** 的顺序将它们重新压入栈中。
+
+**2. `None` 标记的作用：**
+在压入当前节点（中节点）之后，紧接着压入一个 `None`。这个 `None` 的作用是告诉程序：“该节点的左右子树都已经安排好了，当这个 `None` 被弹出时，说明轮到处理这个中节点了。”
+
+**3. 处理逻辑：**
+当循环遇到栈顶不为 `None` 时，说明还有子树没展开，就弹出节点并按“右中左”压入；当遇到栈顶为 `None` 时，说明下面那个节点就是需要输出的“中节点”，此时连续弹出 `None` 和真正的节点，将其值加入结果集。
+
+**4. 整体效果：**
+虽然入栈顺序是“右中左”，但由于栈的后进先出特性，实际出栈访问的顺序自然就变成了“左中右”，完美契合中序遍历的要求。
 
 ****
 
@@ -2069,13 +2086,16 @@ class Solution:
    
    '''
 
+
+
+
 ```
 
 
 
 ### 重写一遍之后还会犯的错
 
-
+如果要全局sum,targetSum的话  ，可以再主函数里面self.sum=sum   还有self.targetsum=targetsum就可以了
 
 
 
@@ -2141,6 +2161,372 @@ class Solution:
 ```python
  
 
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 654最大二叉树
+
+[654. 最大二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/maximum-binary-tree/description/)![image-20261009193318242](./assets/image-20261009193318242.png)
+
+
+
+### 伪代码
+
+```python
+										1.递归法
+class Solution:
+    def traversal(self,left: int, right: int) -> TreeNode: #在这个左闭右开的区间进行递归
+
+        if left>=right:
+            return 
+
+        #找到左left开，右闭right的区间里面的最大值
+        max_index=left
+        for i in range(left,right):
+            if self.nums[i]>self.nums[max_index]:
+                max_index=i
+        
+        root=TreeNode(self.nums[max_index])
+
+        root.left=self.traversal(left,max_index)
+
+        root.right=self.traversal(max_index+1,right)
+
+        return root
+
+    def constructMaximumBinaryTree(self, nums: list[int]) -> TreeNode | None:
+        self.nums=nums
+        return self.traversal(0,len(nums))
+
+        
+```
+
+
+
+### 思路 
+
+1.递归法：还是和上一题一样，递归思路： 把区间【left  right）左右两边的 最大值找到，然后TreeNode 他root  ，
+
+然后下标left到max_index 作为root.left
+
+下标max_index+1 到right+1作为root.right即可
+
+****
+
+### 易错点：
+
+```python
+root.left=self.traversal(left,max_index)self.traversal(left,max_index) 
+    #回溯的时候是left和max_index 而不是0和max_index      
+
+root.right=self.traversal(max_index+1,right)
+	    #回溯的时候是left和max_index 而不是max_index+1和len（nums）        递归一样要有全局性！！！！！！！！！！！！！！！
+```
+
+
+
+### 知识点：
+
+```python
+ 
+#如果像这样分函数写的话 ，nums需要调用
+
+        self.nums=nums
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+## 617合并二叉树
+
+[617. 合并二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/merge-two-binary-trees/description/)
+
+![image-20261009195644123](./assets/image-20261009195644123.png)
+
+
+
+### 伪代码
+
+```python
+									1.递归法
+class Solution:
+    def merge(self,root1,root2):
+        if not root1: #如果root1为空 直接返回root2，因为就算是空也可以直接返回得了
+            return root2
+        if not root2:
+            return root1
+        
+        if  root1 and  root2: #如果都不为空那就继续递归，为空的话有一个直接就在上面返回了
+            root=TreeNode(0)
+            root.val=root1.val+root2.val
+
+            root.left=self.merge(root1.left,root2.left)
+            root.right=self.merge(root1.right,root2.right)
+
+            return root
+
+    def mergeTrees(self, root1: TreeNode | None, root2: TreeNode | None) -> TreeNode | None:
+        return self.merge(root1,root2)
+    
+    
+							
+        
+        
+        
+        									2.队列遍历法
+
+class Solution:
+    def mergeTrees(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root1:
+            return root2
+        if not root2:
+            return root1
+
+        que = deque([root1, root2])
+
+        while que:
+            node1 = que.popleft()
+            node2 = que.popleft()
+
+            node1.val += node2.val #此时从队列里面成对出来的都是不为空的，并且一个node1一个node2
+
+            if node1.left and node2.left: #如果左节点都存在
+                que.append(node1.left)
+                que.append(node2.left)
+            if node1.right and node2.right: #如果右节点都存在
+                que.append(node1.right)
+                que.append(node2.right)
+
+            if not node1.left and node2.left:#如果node1左节点不存在 node2存在，那就直接给node1
+                node1.left = node2.left
+            if not node1.right and node2.right:
+                node1.right = node2.right
+
+            #此时还有情况node1存在 node2不存在，那根本都不用写代码其实，直接返回的就是node1
+            if  node1.left and not node2.left:
+            if  node1.right and not node2.right:
+
+        return root1
+
+
+```
+
+
+
+### 思路 
+
+1.递归法和上一题思路差不多，两边都非空需要合并的再进行递归，不需要的直接return root即可
+
+2.两边都非空、需要"继续深入合并子节点"的，才加入 que    否则只有一个存在的时候不进行合并，也不放入que当中
+
+   node1是合并之后的结果的节点 如果都存在那就继续在que里面合并
+
+****
+
+### 易错点：
+
+**忘了对特殊情况进行判断了：root1或root2为空的时候 是进行不了.val的操作的  所以要加这个并且这是终止条件，为空的时候就直接可以不再进行了**![image-20261009200023304](./assets/image-20261009200023304.png)
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 700二叉搜索树中的搜索
+
+![image-20261009204513318](./assets/image-20261009204513318.png)
+
+![image-20261009204508492](./assets/image-20261009204508492.png)
+
+
+
+### 伪代码
+
+```python
+										1.许久未见的没有任何算法
+class Solution:
+    def searchBST(self, root: TreeNode | None, val: int) -> TreeNode | None:
+        if not root:
+            return []
+
+        while root:
+            if root.val>val:
+                root=root.left
+            elif root.val<val:
+                root=root.right
+            else: 
+                return root
+        return None
+	
+    
+    										2.递归法
+        
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def searchBST(self, root: TreeNode | None, val: int) -> TreeNode | None:  #
+        if not root:
+            return None
+        
+        if  root.val>val:
+            return self.searchBST(root.left,val)
+        elif root.val<val:
+           return  self.searchBST(root.right,val)
+        else: 
+            return root
+```
+
+
+
+### 思路 
+
+1.直接root.val比val大就让left等于root 然后一直搜索 root搜不到的时候直接return None
+
+2.感觉这个递归法很有说法，就是虽然这几行但是终止条件，要return还是不return都不知道
+
+****
+
+### 易错点：
+
+写递归的时候又忘记要return了 ，你看他的返回值类型，不是root就是none所以要return
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+[98. 验证二叉搜索树 - 力扣（LeetCode）](https://leetcode.cn/problems/validate-binary-search-tree/description/)
+
+![image-20261009213608825](./assets/image-20261009213608825.png)
+
+
+
+### 伪代码
+
+```python
+									1.统一迭代法再加一个pre去比较	
+class Solution:
+    def isValidBST(self, root: TreeNode | None) -> bool:
+        if not root:
+            return True  # 空树也是合法的二叉搜索树
+        
+        stack = [root]
+        pre = None  # 记录中序遍历中前一个被访问的节点
+        
+        while stack:
+            node = stack[-1]
+            
+            if node is not None:
+                node = stack.pop()  # 弹出当前节点，准备把它的左右子节点和它自己重新压入
+
+                if node.right:
+                    stack.append(node.right)
+                
+
+                stack.append(node)
+                stack.append(None)  # 这个 None 就是标记，表示“该节点已经访问过，等待处理结果”
+
+                if node.left:
+                    stack.append(node.left)
+                    
+            else:
+
+                stack.pop()  # 弹出 None 标记
+                node = stack.pop()  # 弹出真正的节点
+                
+                # ================ 核心改动在这里 ================
+                # 原本这里写的是 result.append(node.val)
+                # 现在我们要判断：当前节点是否大于前一个节点 因为是中序，所以左边的更小也就是说中序的数组是从小到大的
+                if pre and node.val <= pre.val:
+                    return False  # 不满足递增，不是 BST
+                pre = node  # 更新 pre，记录当前节点
+                # ===============================================
+                
+        return True
+    
+    
+    								2.中序递归法
+class Solution:
+    def __init__(self):
+        self.pre = None
+
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        if root is None:
+            return True
+
+        # 递归遍历左子树  一直找到左叶子才return true
+        left = self.isValidBST(root.left)
+
+        if self.pre is not None and self.pre.val >= root.val:  #比较在这里
+            return False
+        self.pre = root   #第一次记录的是最左叶子
+
+
+        # 递归遍历右子树
+        right = self.isValidBST(root.right)
+
+        return left and right
+```
+
+
+
+### 思路 
+
+1.统一迭代法：：相对于中序，我们这里就是用中序1遍历，然后记录pre是上一个节点 ，每次弹出真正的节点之后，就比较一下（虽然之前就说过这个pre的妙用，但是我还是感觉这个pre写的很好）
+
+2.中序递归法：每个root都和pre去比较 ，pre也一直储存着中序的方法
+
+****
+
+### 易错点：
+
+### 知识点：
+
+1.二叉搜索树， 中序-左中右去遍历的话就是从小到大遍历的
+
+2.pre的妙用
+
+```python
+        pre = None  # 记录中序遍历中前一个被访问的节点 
+                if pre and node.val <= pre.val:
+                    return False  # 不满足递增，不是 BST
+                pre = node  # 更新 pre，记录当前节点
+                
+        这样就自动过滤第一个pre，然后第二个非none的pre开始去比较，
 ```
 
 
