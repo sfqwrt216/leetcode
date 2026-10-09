@@ -2427,7 +2427,7 @@ class Solution:
 
 
 
-
+## 98验证二叉搜索树
 
 [98. 验证二叉搜索树 - 力扣（LeetCode）](https://leetcode.cn/problems/validate-binary-search-tree/description/)
 
