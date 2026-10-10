@@ -1,3 +1,7 @@
+
+
+
+
 # 二叉树
 
 1.每次写代码的时候都要先写一种就是
@@ -13,6 +17,12 @@
 
 
 ### 迭代法
+
+在统一迭代法当中，stack，append（None）而不是   "None"  不需要加双引号
+
+
+
+
 
 迭代法基本都是用的栈执行的，不管是统一迭代法还是啥都是这样
 
@@ -38,13 +48,44 @@
 self.nums=nums
 ```
 
+
+
+
+
+### 二叉搜索树
+
+二叉搜索树的中序遍历是一个严格递增的序列
+
+
+
+
+
+```python
+
+ #第75行我原本写的 if self.pre：  但是0也会被当做None ，所以就要判断是否为空
+        if self.pre is not None:
+
+
+
+```
+
+
+
+
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**
+
 ## 二叉树的前序遍历（前-中-后这个顺序写迭代）
 
 [144. 二叉树的前序遍历 - 力扣（LeetCode）](https://leetcode.cn/problems/binary-tree-preorder-traversal/description/)
 
 ![image-20260930101305295](./assets/image-20260930101305295.png)
-
-
 
 
 
@@ -251,7 +292,13 @@ class Solution:
 
 ### 思路 
 
-递归法：没有任何技巧可言
+递归法：没有任何技巧可言 ，***感觉后序就是先把左右两边处理完代码放在最上面，然后再单独再去处理中间的  **
+
+***后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑。  **
+
+
+
+
 
 迭代法：看似很难其实一步一步写出来还挺简单的，主要是边想着二叉树边动手的话还挺快的，首先先一直往左遍历，然后判断是否有右节点，有的话就是else里面的内容：再进行遍历，直到没有右节点以及左节点的时候，就存到result当中国，！！！！pre=node！！！pre赋值为当前节点，node=none不然中间节点又去遍历左节点了，然后node.right遍历过了或者没有右节点的时候，就直接存下来
 
@@ -2389,7 +2436,7 @@ class Solution:
 #         self.right = right
 class Solution:
     def searchBST(self, root: TreeNode | None, val: int) -> TreeNode | None:  #
-        if not root:
+        if not root: #一直找，找的都没有叶子了不就直接return None10222
             return None
         
         if  root.val>val:
@@ -2527,6 +2574,490 @@ class Solution:
                 pre = node  # 更新 pre，记录当前节点
                 
         这样就自动过滤第一个pre，然后第二个非none的pre开始去比较，
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 二叉搜索树的最小绝对差
+
+![image-20261010104634020](./assets/image-20261010104634020.png)
+
+[530. 二叉搜索树的最小绝对差 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-absolute-difference-in-bst/)
+
+
+
+### 伪代码
+
+```python
+								1.中序遍历法（更垃圾）
+
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return
+        result=[]
+        stack=[root]
+        min=float("inf")
+        while stack:
+            cur=stack[-1]
+
+            if cur is not None:
+                cur=stack.pop()
+                
+                if cur.right:
+                    stack.append(cur.right)
+                stack.append(cur)
+                stack.append(None)
+                if cur.left:
+                    stack.append(cur.left)
+            
+            else :
+                stack.pop()
+                cur=stack.pop()
+                result.append(cur.val)
+
+        for i in range(0,len(result)-1):
+            if result[i+1]-result[i]<min:
+                min=result[i+1]-result[i]
+        return min
+    								2.中序遍历法
+
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return
+        result=[]
+        stack=[root]
+        minmin=float("inf")
+        pre=None
+
+        while stack:
+            cur=stack[-1]
+
+            if cur is not None:
+                cur=stack.pop()
+
+                if cur.right:
+                    stack.append(cur.right)
+                stack.append(cur)
+                stack.append(None)
+                if cur.left:
+                    stack.append(cur.left)
+            
+            else :
+
+                stack.pop()
+                cur=stack.pop()
+                if  pre:
+                    minmin=min(minmin,cur.val-pre.val)
+                pre=cur
+
+        return minmin
+    
+    
+    										3.中序递归法（就在中序加了pre比较）
+
+class Solution:
+    def dp(self,root):
+        if not root:
+            return 
+        self.dp(root.left)
+        #就在这里改了一下中序
+        if self.pre is not None:
+            self.min=min(self.min,root.val-self.pre)
+        self.pre=root.val
+        
+        self.dp(root.right)
+
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        self.pre=None
+        self.min=float("inf")
+        
+        self.dp(root)
+        return self.min
+
+```
+
+![image-20261010105554752](./assets/image-20261010105554752.png)
+
+![image-20261010105525825](./assets/image-20261010105525825.png)
+
+第一种中序遍历法：使用了result数组去记录下来整个二叉搜索树，最后再去遍历一遍比较浪费时间
+
+第二种中序遍历法：直接用pre指针去记录上一个原本要加入到result当中的值，然后cur-pre与min比较即可
+
+### 思路 
+
+就是利用二叉搜索数的中序是一个递增的序列这个特性
+
+1. 中序遍历法：把结果result之后直接比较即可
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ #第75行我原本写的 if self.pre：  但是0也会被当做None ，所以就要判断是否为空
+        if self.pre is not None:
+```
+
+
+
+![image-20261010111024183](./assets/image-20261010111024183.png)
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+
+
+
+
+## 二叉搜索树中的众数
+
+[501. 二叉搜索树中的众数 - 力扣（LeetCode）](https://leetcode.cn/problems/find-mode-in-binary-search-tree/description/)
+
+![image-20261010113136206](./assets/image-20261010113136206.png)
+
+
+
+
+
+
+
+### 伪代码
+
+```python
+					1.完全的统一迭代法（改变：加了字典去记录，最后统计了一下个数）  这种方法适用于普通二叉树，二叉搜索树就要用它的特性
+class Solution:
+    def findMode(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+
+        freq_map=defaultdict(int)
+        stack=[root]
+
+        while stack:
+            cur=stack[-1]
+
+            if cur is not None:
+
+                cur=stack.pop()
+
+                if cur.right:
+                    stack.append(cur.right)
+                stack.append(cur)
+                stack.append(None)
+                if cur.left:
+                    stack.append(cur.left)
+
+            else:
+                stack.pop()
+                cur=stack.pop()
+                freq_map[cur.val]+=1
+
+        #通过字典统计个数
+        result = []
+        max_count = 0
+        for val, count in freq_map.items():
+            if count > max_count:
+                max_count = count
+                result = [val]       # 发现更大的频率，重新开始记录
+            elif count == max_count:
+                result.append(val)   # 频率相同，追加进去
+        return result
+  	  
+    								     2二叉树的统一迭代法（利用了二叉树的有序性，实时更新结果）
+    
+
+class Solution:
+    def findMode(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+        pre=None    #记录上一个的值
+        result=[]  #用来记录返回的结果
+        maxCount = 0        # 最大频率
+        count = 0           # 当前元素出现频率
+        stack=[root]
+
+        while stack:
+            cur=stack[-1]
+
+            if cur is not None:
+
+                cur=stack.pop()
+
+                if cur.right:
+                    stack.append(cur.right)
+                stack.append(cur)
+                stack.append(None)
+                if cur.left:
+                    stack.append(cur.left)
+            else:
+                stack.pop()
+                cur=stack.pop()
+                													#无论是迭代还是递归都是在这个地方加上新的东西即可
+                if pre is None:
+                    # 第一个节点
+                    count = 1
+                elif pre.val == cur.val:
+                    # 与前一个节点值相同，频率+1
+                    count += 1
+                else:
+                    # 与前一个节点值不同，频率重置为1
+                    count = 1
+                # 如果当前频率等于最大频率，加入结果集
+                if count == maxCount:
+                    result.append(cur.val)
+                
+                # 如果当前频率大于最大频率，更新最大频率并清空之前的结果
+                if count > maxCount:
+                    maxCount = count
+                    result.clear()
+                    result.append(cur.val)
+                    
+                pre = cur  # 更新前一个节点指针
+        return result    
+    
+    												3.二叉搜索树的递归
+from typing import Optional
+
+class Solution:
+    def dp(self, root):
+        if not root:
+            return
+        
+        # 左
+        self.dp(root.left)
+        
+        # 中：就在这里处理频率统计逻辑									就在这里加了频率逻辑
+        if self.pre is None:          # 第一个节点
+            self.count = 1
+        elif self.pre == root.val:    # 与前一个节点数值相同
+            self.count += 1
+        else:                         # 与前一个节点数值不同
+            self.count = 1
+            
+        self.pre = root.val           # 更新前一个节点的值
+        
+        # 更新结果集
+        if self.count == self.max_count:
+            self.result.append(root.val)
+            
+        if self.count > self.max_count:
+            self.max_count = self.count
+            self.result.clear()       # 发现更大的频率，清空之前的结果
+            self.result.append(root.val)
+
+        # 右
+        self.dp(root.right)
+
+    def findMode(self, root: Optional[TreeNode]) -> list[int]:
+        # 初始化状态变量（注意：这里 pre 存的是节点的值，而不是节点本身）
+        self.pre = None
+        self.count = 0
+        self.max_count = 0
+        self.result = []
+        
+        self.dp(root)
+        return self.result
+```
+
+
+
+### 思路 
+
+1.完全的统一迭代法（改变：加了字典去记录，最后统计了一下个数）  这种方法适用于普通二叉树，二叉搜索树就要用它的特性
+
+二叉搜索树利用他的中序有序特性，
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+
+
+## 二叉树的最近公共祖先
+
+![image-20261010202050613](./assets/image-20261010202050613.png)
+
+![image-20261010203708075](./assets/image-20261010203708075.png)
+
+[236. 二叉树的最近公共祖先 - 力扣（LeetCode）](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/)
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  
+
+**后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  **后序遍历（左右中）就是天然的回溯过程，可以根据左右⼦树的返回值，来处理中节点的逻辑**。  
+
+### 伪代码
+
+```python
+								#递归法  --（本质就是后续递归，可以看第二题的dp法）
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return  None
+        if root ==q or root==p:
+            return root
+        
+        left=self.lowestCommonAncestor(root.left,p,q)
+        right=self.lowestCommonAncestor(root.right,p,q)
+
+        #左右两边都返回了值，那就说明是情况1							这里就体现了天然的后序回溯算法 ，通过left和rigth返回值去写中值
+        if left is not None and right is not None:
+            return root
+        
+        if left is None and right is not None: #找到了右边
+            return right
+        elif left is not None and right is None:#找到了左边
+            return left
+
+        else :                              #都没找到
+            return None
+
+```
+
+
+
+### 思路 
+
+
+
+本质就是后序递归，第二题的后序遍历的递归法一致，都是先
+
+```python
+    left=self.lowestCommonAncestor(root.left,p,q)
+    right=self.lowestCommonAncestor(root.right,p,q)
+```
+
+然后再去对中间的值进行处理
+
+本体思路：终止条件： 到达最后也没找到，return	None     找到了就返回他的root
+
+
+
+
+
+
+
+情况1：两个孙子在两边，返回的时候return 4     if left is not None and right is not None: 也就是这行代码
+
+<img src="./assets/image-20261010203055603.png" alt="image-20261010203055603" style="zoom:50%;" />
+
+情况2： 自己是祖先， 找到了马上返回甚至都没发现p，那也是对的，就算没找到也可以直接返回q
+
+​    if left is None and right is not None: #找到了右边
+
+​      return right
+
+​    elif left is not None and right is None:#找到了左边
+
+​      return left
+
+![image-20261010203154580](./assets/image-20261010203154580.png)
+
+
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 二叉搜索树的最近公共祖先
+
+[235. 二叉搜索树的最近公共祖先 - 力扣（LeetCode）](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+![image-20261010205300374](./assets/image-20261010205300374.png)
+
+
+
+### 伪代码
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def traversal(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return None
+        cur=root
+        if cur.val>q.val and cur.val>p.val:						 #二叉搜索树有序即就往左边走
+            left=self.traversal(root.left,p,q)
+            if left is not None :
+                return left
+
+        if cur.val <q.val and cur.val<p.val:
+            right =self.traversal(root.right,p,q)
+            if right is not None:
+                return right
+        
+        return cur #如果两个if 都没有进，要么就是在这两个之间，要么就是等于这两个其中一个，无论按种情况都可以直接返回
+
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        return self.traversal(root,p,q)
+```
+
+
+
+### 思路 
+
+利用二叉搜索树左边小于根，右边大于根的特性，		直接进行根的判断，往那边走   ，
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
 ```
 
 
