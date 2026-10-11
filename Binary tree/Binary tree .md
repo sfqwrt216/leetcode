@@ -14,7 +14,23 @@
 
 3.确定单层递归逻辑
 
+（二叉树的递归）都不管root.left和root.right存不存在？？？？ 就算是None也要返回当做返回值
 
+
+
+
+
+### 寻找最左节点的方法
+
+```python
+                while cur.left:
+                    cur = cur.left
+                #然后此时的cur就是最左节点
+```
+
+
+
+450删除二叉搜索树的节点里面的递归法，是很经典的回溯递归，用返回值实现不需要pre的存在，让其也能指向上一个存在的节点的左右值
 
 ### 迭代法
 
@@ -2216,6 +2232,67 @@ class Solution:
 
 
 
+## 从前序和中序遍历序列构造二叉树
+
+[105. 从前序与中序遍历序列构造二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/)
+
+![image-20261011152154131](./assets/image-20261011152154131.png)
+
+
+
+
+
+###  思路
+
+和上一题思路一样的
+
+### 伪代码
+
+```python
+
+class Solution:
+    def buildTree(self, preorder: list[int], inorder: list[int]) -> TreeNode | None:
+        if not preorder and not inorder:
+            return 
+        rootval=preorder[0]
+
+        root=TreeNode(rootval)
+
+        midIndex=inorder.index(rootval)
+
+        inorderleft=inorder[0:midIndex]
+        inorderright=inorder[midIndex+1:len(inorder)]
+
+        preorderleft=preorder[1:len(inorderleft)+1]
+        preorderright=preorder[len(inorderleft)+1:]
+
+        root.left=self.buildTree(preorderleft,inorderleft)
+        root.right=self.buildTree(preorderright,inorderright)
+
+        return root
+```
+
+
+
+
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
 
 
 ## 654最大二叉树
@@ -3063,3 +3140,461 @@ class Solution:
 
 
 ### 重写一遍之后还会犯的错
+
+
+
+
+
+## 701二叉搜索树的插入操作
+
+****![image-20261011135235045](./assets/image-20261011135235045.png)
+
+![image-20261011135552760](./assets/image-20261011135552760.png)
+
+所有值都是独一无二的
+
+### 伪代码
+
+```python
+										1.利用二叉搜索树的特性
+class Solution:
+    def insertIntoBST(self, root: TreeNode | None, val: int) -> TreeNode | None:
+        if not root:
+            return TreeNode(val)
+        pre=root
+        cur=root
+        node=TreeNode(val)
+
+        while cur is not None:
+            pre=cur
+            if cur.val>val:
+                cur=cur.left
+            elif cur.val<val:
+                cur=cur.right
+        
+        if pre.val>val:
+            pre.left=node
+        elif pre.val<val:
+            pre.right=node
+        
+        return root
+    
+    		2.我自己写的递归法（缺点：递归没有返回值，代码冗余，不像递归）  后面复习直接看第二种办法吧
+
+class Solution:
+    def traversal(self,root):
+        
+        if root.val>self.val:
+            if root.left:
+                self.traversal(root.left)
+            else:
+                root.left=self.node
+
+        if root.val<self.val:
+            if root.right:
+                self.traversal(root.right)
+            else:
+                root.right=self.node
+
+    def insertIntoBST(self, root: TreeNode | None, val: int) -> TreeNode | None:
+        self.val=val
+        self.node=TreeNode(val)
+        if not root:
+            return self.node
+        self.traversal(root)
+        return root
+    
+    
+    									3.一看就是高手的递归
+
+class Solution:
+    def insertIntoBST(self, root: TreeNode | None, val: int) -> TreeNode | None:
+        if not root:
+            return TreeNode(val)
+        
+        if root.val>val:
+            root.left=self.insertIntoBST(root.left,val)
+        if root.val<val:
+            root.right=self.insertIntoBST(root.right,val)
+
+        return root        
+
+```
+
+
+
+### 思路 
+
+1.只要遍历⼆叉搜索树，找到空节点 插⼊元素就可以了，那么这道题其实就简单了。  
+
+
+
+
+
+迭代法： .用pre和cur指针去记录即可，遇到比val大的就cur往左边走，遇到比val小的往右边走
+
+自己的递归法： 在递归函数里比较 第一个if判断位置，第二个if判断是否为空，为空直接插入
+
+高手的递归法： 把这个终止条件和先验条件合二为一     妙哉妙哉！！   
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+## 450删除二叉搜索树的节点
+
+[450. 删除二叉搜索树中的节点 - 力扣（LeetCode）](https://leetcode.cn/problems/delete-node-in-a-bst/)
+
+![image-20261011144312863](./assets/image-20261011144312863.png)
+
+
+
+
+
+###  思路
+
+
+
+![image-20261011144306405](./assets/image-20261011144306405.png)
+
+
+
+第五种情况就是把当前root删了，然后把root.left移交到root.right的最左节点，然后上一个节点的返回root.right
+
+二叉树的递归法： 用当前的root.val去判断，而不是用root.left和root.right ，至于如何回溯 用return root去回溯，并且递归的关键就用变量去接受这个root，这就是回溯的关键
+
+普通树的递归法：一旦找到了key的root ，就把他和右子树的最左节点交换（模板?） 然后一直换，直到放到了最下面没有节点了就直接          
+
+ return root.left也就是None
+
+### 伪代码
+
+```python
+										1.二叉搜索树的递归法
+
+class Solution:
+    def deleteNode(self, root: TreeNode | None, key: int) -> TreeNode | None:
+        if not  root:       #一直找，找到空节点都没找完
+            return root
+        
+        if root.val==key:
+
+            if root.left and not root.right:
+                return root.left
+            elif root.right and not root.left:
+                return root.right
+            elif not root.right and not root.left:
+                return None
+            elif root.right and root.left:
+
+                cur=root.right #找到了root的右节点的最左边的值
+                while cur.left:
+                    cur=cur.left
+                cur.left=root.left
+                return root.right
+            
+        elif root.val>key:  root.left=self.deleteNode(root.left,key)		#儿茶所搜输的特性在这里可以节约时间复杂度
+        elif root.val<key:   root.right=self.deleteNode(root.right,key)
+        return root
+    
+    								2.普通树的递归法
+        
+class Solution:
+    def deleteNode(self, root: TreeNode | None, key: int) -> TreeNode | None:
+        if not root:
+            return root
+        
+        if root.val == key: 		#一旦找到了就把他换下去，换到右子树的最左边节点
+   
+            if not root.right:
+                return root.left
+            
+            # 寻找右子树的最左节点 然后交换位置 ，为啥是右子树的最左节点，箱单与模板吧
+            cur = root.right
+            while cur.left:
+                cur = cur.left
+
+            root.val, cur.val = cur.val, root.val
+            
+
+        root.left = self.deleteNode(root.left, key)
+        root.right = self.deleteNode(root.right, key)
+        
+        return root
+
+
+```
+
+
+
+
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+
+
+
+
+## 669修建二叉树
+
+[669. 修剪二叉搜索树 - 力扣（LeetCode）](https://leetcode.cn/problems/trim-a-binary-search-tree/description/)![image-20261011162333695](./assets/image-20261011162333695.png)
+
+
+
+###  思路
+
+1.迭代法：（细节：cur.left.val去判断 而不是cur.val这样不好写的样子？？？？）
+
+1.先判断root是不是在范围内 ，如果root<low就 root.right替换root  反之亦是如此
+
+2.一个while判断左边，cur一直往左走判断cur.left是否小于L	是的话cur.left.rigth替换cur.left如下图所示						  另一个while同理伪代码
+
+![image-20261011163052353](./assets/image-20261011163052353.png)
+
+
+
+2.递归法：
+
+```python
+										1.迭代法
+class Solution:
+    def trimBST(self, root: TreeNode | None, low: int, high: int) -> TreeNode | None:
+        if not root:
+            return None
+
+        while root and (root.val<low or root.val>high):#因为是二叉搜索树 如果满足此情况说明左或右子树全都不满足了
+            if root.val<low:
+                root=root.right
+            if root.val>high:
+                root=root.left
+
+        if not root:        #如果上面跳出循环因为root为None整棵树都不符合
+            return None
+
+        #这两个就是判断后面是否超界了
+        cur=root
+        while cur:
+            while cur.left and cur.left.val<low:  #跳出了范围     不需要判断这里面的值>R因为这是二叉搜索树
+                cur.left=cur.left.right         #cur.left小于L的话 看看cur.left.right会不会大于
+            cur=cur.left
+
+        cur=root
+        while cur:
+            while cur.right and cur.right.val>high: #跳出了范围     不需要判断这里面的值<L因为这是二叉搜索树
+                cur.right=cur.right.left         #cur.right大于 R的话 看看cur.right.left会不会小于
+            cur = cur.right
+        return root
+    
+    
+    
+    									2.递归法
+class Solution:
+    def trimBST(self, root: TreeNode | None, low: int, high: int) -> TreeNode | None:
+        if root is None:
+            return None
+        #二叉搜索树既然都走到了left节点，那这里的值都小于root 那就不会超过high ，所以不需要看right
+		#二叉搜索树既然都走到了right节点，那这里的值都大于root 那就不会小于LOW ，所以不需要看left
+        
+        if root.val<low:#提前剪枝都不需要left节点的
+            right=self.trimBST(root.right,low,high)
+            return right
+        if root.val>high:#提前剪枝都不需要right节点的
+            left=self.trimBST(root.left,low,high)
+            return left
+        root.left = self.trimBST(root.left, low, high)   
+        root.right = self.trimBST(root.right, low, high
+
+        return root  #最后一个节点的时候root.left和root.right都为None了就直接返回了root
+
+
+```
+
+****
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+
+
+## 将有序数组转化为二叉搜索树
+
+[108. 将有序数组转换为二叉搜索树 - 力扣（LeetCode）](https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/description/)
+
+![image-20261011202919157](./assets/image-20261011202919157.png)
+
+
+
+
+
+###  思路
+
+就是直接左右两边一起递归即可，中间的弄成根节点返回return即可，这样自动平衡了
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+### 伪代码
+
+```python
+										1.递归法
+class Solution:
+    def traversal(self,nums,left,right):
+        if left>right:
+            return 
+
+        mid=(left+right) // 2
+
+        root=TreeNode(nums[mid])
+
+        root.left=self.traversal(nums,left,mid-1)
+        root.right=self.traversal(nums,mid+1,right)
+
+        return root
+
+    def sortedArrayToBST(self, nums: list[int]) -> TreeNode | None:
+        if not nums:
+            return None
+
+   
+        return self.traversal(nums,0,len(nums)-1)
+
+```
+
+
+
+## 把二叉搜索树转换为累加树
+
+[538. 把二叉搜索树转换为累加树 - 力扣（LeetCode）](https://leetcode.cn/problems/convert-bst-to-greater-tree/description/)
+
+![image-20261011174013194](./assets/image-20261011174013194.png)
+
+###  思路
+
+1.中序是 左---中---右  ，但是我们这里要先处理右 ---中 ---左  ，所以是反向的中序遍历  ，压栈顺序为 左 --中--右，用pre记录然后直接累加即可
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 									1.反向中序，统一迭代法
+class Solution:
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        if not root:
+            return None
+        
+        pre = 0  # 记录累加和
+        stack = [root]
+        
+        while stack:
+            node = stack[-1]
+            
+            if node is not None:
+                # 1. 弹出当前节点，准备把它的左右孩子按顺序放进去
+                node = stack.pop()
+                
+                # 2. 统一迭代法：压栈顺序与目标遍历顺序相反
+                # 目标顺序是：右 -> 中 -> 左 (反向中序)
+                # 所以压栈顺序是：左 -> 中 -> 右
+                
+                # 压入左孩子 (最后处理，最先压入)
+                if node.left:
+                    stack.append(node.left)
+                
+                # 压入中节点，并紧跟一个 None 作为标记
+                stack.append(node)
+                stack.append(None)
+                
+                # 压入右孩子 (最先处理，最后压入)
+                if node.right:
+                    stack.append(node.right)
+                    
+            else:
+                # 3. 遇到 None 标记，说明栈顶的节点该处理了
+                stack.pop()  # 弹出 None
+                node = stack.pop()  # 弹出真正的节点
+                
+                # 核心逻辑：累加
+                pre += node.val
+                node.val = pre
+                0.
+        return root
+    
+    
+										2.递归法（就是反中序的递归法，用pre记录一下；累加即可）
+class Solution:
+    def traversal(self,root):
+        if not root:
+            return 
+        self.traversal(root.right)
+
+        root.val+=self.pre
+        self.pre=root.val
+        
+        self.traversal(root.left)
+
+    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        pre=0
+        self.pre=pre
+        self. traversal(root)
+        return root
+```
+
+
+
+### 重写一遍之后还会犯的错
+
+### 伪代码
+
+```python
+
+```
+
+
+
