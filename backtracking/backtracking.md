@@ -393,6 +393,24 @@ class Solution:
 
 ​        continue
 
+
+
+（经过重写代码的时候我发现了一个细节）：
+
+```python
+      if i > startIndex and candidates[i] == candidates[i-1]: #和之前代码区别就在这，去重
+              continue
+            
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复   
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复            
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复            
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复            
+这里 i > startIndex 是实现去重的关键 ，比如 1 2 2 3  选择了 1 2 之后，跳过了第一个2就进入了第二个2，这样才会重复
+这是本层的第一个选择，无论选什么都不会和“本层之前的自己”重复
+```
+
+
+
 脑子思维定式了
 
 ### 伪代码
@@ -408,7 +426,7 @@ class Solution:
         for i in range(startIndex,len(candidates)):
             if self.sum+candidates[i]>target:#一定要这样写不要先加起来再去比较，会造成污染
                 break
-            if i > startIndex and candidates[i] == candidates[i-1]:    #和之前代码区别就在这，去重
+            if i > startIndex and candidates[i] == candidates[i-1]: #和之前代码区别就在这，去重
                 continue
             self.sum+=candidates[i]
             self.path.append(candidates[i])
@@ -447,6 +465,7 @@ class Solution:
 ### 伪代码
 
 ```python
+														1.没剪枝（用函数判断是否回文串）
 class Solution:
     # 判断是否为回文串（使用 Python 的翻转切片写法，最简洁）
     def isPalindrome(self, s: str, start: int, end: int) -> bool:
@@ -471,8 +490,382 @@ class Solution:
         self.backtracking(s,0,len(s))
         return self.result
 
+															2.遍历字符串后用dp数组记录回文串，然后查询
+class Solution:
+    def backtracking(self, s: str, startIndex: int, dp: list[list[bool]]):
+        # 终止条件：起始位置等于字符串长度
+        if startIndex == len(s):
+            self.result.append(self.path[:])
+            return
 
+        for i in range(startIndex, len(s)):
+            # 【优化】直接查表，O(1) 时间判断是否为回文
+            if dp[startIndex][i]:
+                self.path.append(s[startIndex : i + 1])
+                self.backtracking(s, i + 1, dp)
+                self.path.pop()  
+                
+    def partition(self, s: str) -> list[list[str]]:
+        self.result = []
+        self.path = []
+        n = len(s)
+        
+        # 【优化核心】构建 DP 数组，dp[i][j] 表示 s[i..j] 是否是回文串
+        # 初始化全为 False
+        dp = [[False] * n for _ in range(n)]
+        
+        # 必须从下往上、从左往右遍历，因为 dp[i][j] 依赖于 dp[i+1][j-1]
+        for i in range(n - 1, -1, -1):
+            for j in range(i, n):
+                if s[i] == s[j]:
+                    # 如果只有 1 个字符 (i==j)，或 2 个字符 (j - i == 1)，直接是回文
+                    # 否则看中间部分 dp[i+1][j-1] 是不是回文
+                    if j - i <= 1:
+                        dp[i][j] = True
+                    else:
+                        dp[i][j] = dp[i + 1][j - 1]
+        
+        # 将 dp 数组传给回溯函数
+        self.backtracking(s, 0, dp)
+        return self.result
+
+    
 ```
 
 
+
+二维dp数组长这样：
+
+用这张图可以看出如果s[i] == s[j]  那么就查找dp[i+1][j-1]     看看是不是回文，是的话他就也是因为首尾已经一样，里面的再是回文就一样了
+
+至于for循环的顺序： 因为 dp[i][j] 依赖于 dp[i+1][j-1]
+
+![image-20261013100236551](./assets/image-20261013100236551.png)
+
+
+
+
+
+
+
+## 93复原IP地址
+
+[93. 复原 IP 地址 - 力扣（LeetCode）](https://leetcode.cn/problems/restore-ip-addresses/)
+
+![image-20261013153908947](./assets/image-20261013153908947.png)
+
+
+
+
+
+### 知识点：
+
+```python
+ s[startIndex:endIndex] ： #字符串的索引是左开右闭的
+
+    #在判断是否true的时候
+    elif int(s[startIndex])==0 and int(s[startIndex:endIndex])>0  我原来写的是这个  但是如果遇到0010 还是不行
+```
+
+
+
+### 易错点：
+
+**`startIndex == len(s)-1` 不是"用完"。** 它是"还剩最后一个字符没处理"。用完应该是 `startIndex == len(s)`。
+
+**) 段数没控制。** IP 必须恰好 4 段。你可能切 2 段、3 段、5 段都返回，结果全错。
+
+```python
+       所以最后的判断结果为
+    
+    if len(self.path) == 4:
+            if startIndex == len(s):#最后的索引到达了最后值
+                self.result.append(self.path[:])
+                return 
+```
+
+
+
+![image-20261013160355700](./assets/image-20261013160355700.png)
+
+
+
+
+
+### 思路
+
+和分割回文串一样，只不过这里有好多细节要去注意：写的时候注意istrue要是左闭右开的，所以传入endIndex的时候要+1
+
+
+
+1.最终结果的返回 要经过两个if  ，第一个判断长度为4 ，第二个判断startIndex=len（s） 也就是到达了s之外
+
+2. s【startIndex，endIndex】是没有索引到endIndex的，也就是左闭右开的
+3. self.result.append(".".join(self.path))  最后的结果要加点，所以要这样写，我还是一直没想到，还想用+“.”的方式
+4. int(s[startIndex])==0 and endIndex - startIndex > 1:  判断是否为真的的时候，首位为0 那长度还大于1 那就直接false
+
+### 伪代码
+
+```python
+class Solution:
+    def istrue(self,s,startIndex,endIndex): #s[] 字符串的索引左闭右开 ，传入的endIndex就是要索引不到的
+        if startIndex >= endIndex:          # 空区间，补上
+            return False        
+        if int(s[startIndex:endIndex])>255 or  int(s[startIndex:endIndex])<0: #这个数超过范围
+            return False
+        elif int(s[startIndex])==0 and endIndex - startIndex > 1:#这个数首位为0但是后面不为0
+            return False
+        return True
+
+    def backtracking(self,s,startIndex):
+        if len(self.path) == 4:
+            if startIndex == len(s):#最后的索引到达了最后值
+                self.result.append(".".join(self.path))
+                return 
+
+        for i in range(startIndex,len(s)):
+            if self.istrue(s,startIndex,i+1): #注意判断的这个endIndex是左闭右开的 ，所以这里也要i+1
+                self.path.append(s[startIndex:i+1])
+                self.backtracking(s,i+1)
+                self.path.pop()
+            
+    def restoreIpAddresses(self, s: str) -> list[str]:
+        self.result=[]
+        self.path=[]
+        if len(s) < 4 or len(s) > 12:#剪枝1111
+       		return self.result
+        self.backtracking(s,0)
+        return self.result
+```
+
+
+
+
+
+
+
+
+
+## 78子集
+
+[78. 子集 - 力扣（LeetCode）](https://leetcode.cn/problems/subsets/description/)
+
+![image-20261013164846418](./assets/image-20261013164846418.png)
+
+
+
+
+
+###  思路
+
+只要知道顺序是这样加进去的就迎刃而解了  1   12   123   13   2   23   3  ，甚至比组合问题还简单hhh
+
+![image-20261013165110451](./assets/image-20261013165110451.png)
+
+还有绞尽脑汁的几点：
+
+1.**这一层的 结果要在写一个递归里面实现result.append（）**    **比如结果 `[1]`，是不是在选了 `1` 之后，进入下一层递归时才被记录下来的**
+
+2.**不写终止结果也可以，因为for循环的边界已经治好了 这个返回**
+
+### 伪代码
+
+```python
+class Solution:
+    def backtracking(self,nums,startIndex):
+        self.result.append(self.path[:]) #放到最前面因为空集是所有元素的集合
+        if startIndex>=len(nums):
+            return 
+
+        for i in range(startIndex,len(nums)):
+            self.path.append(nums[i])
+            self.backtracking(nums,i+1)
+            self.path.pop()
+
+    def subsets(self, nums: list[int]) -> list[list[int]]:
+        self.result=[]
+        self.path=[]
+        self.backtracking(nums,0)
+        return self.result
+    
+    
+    									2.如果实在不理解就把加入result放到for里面也可以
+    
+class Solution:
+    def backtracking(self,nums,startIndex):
+
+        if startIndex>=len(nums):
+            return 
+
+        for i in range(startIndex,len(nums)):
+            self.path.append(nums[i])
+            self.result.append(self.path[:]) 
+            self.backtracking(nums,i+1)
+            self.path.pop()
+
+    def subsets(self, nums: list[int]) -> list[list[int]]:
+        self.result=[]
+        self.path=[]
+        self.result.append([])
+        self.backtracking(nums,0)
+        return self.result
+```
+
+
+
+
+
+
+
+## 子集II
+
+[90. 子集 II - 力扣（LeetCode）](https://leetcode.cn/problems/subsets-ii/)
+
+![image-20261013171627009](./assets/image-20261013171627009.png)
+
+
+
+
+
+###  思路
+
+​	和最普通的回溯区别就在用在了这行代码 if i > startIndex and nums[i] == nums[i-1]: 去重，如果只是nums[i] == nums[i-1] 运行就会报错如下：
+
+会缺少 1 2 2这个结果的存在
+
+![image-20261013171900238](./assets/image-20261013171900238.png)
+
+（经过重写代码的时候我发现了一个细节）：
+
+```python
+      if i > startIndex and candidates[i] == candidates[i-1]: #和之前代码区别就在这，去重
+              continue
+            
+这里 i > startIndex 是实现去重的关键 ，比如 1 2 2 3  选择了 1 2 之后，跳过了第一个2就进入了第二个2，这样才会重复
+
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复            
+有这个能保证			1 2 2 的存在   还可以去除 1 2 的重复            
+这是本层的第一个选择，无论选什么都不会和“本层之前的自己”重复 
+这是本层的第一个选择，无论选什么都不会和“本层之前的自己”重复
+这是本层的第一个选择，无论选什么都不会和“本层之前的自己”重复
+这是本层的第一个选择，无论选什么都不会和“本层之前的自己”重复
+```
+
+
+
+### 伪代码
+
+```python
+class Solution:
+    def backtracking(self,nums,startIndex):
+
+
+        for i in range(startIndex,len(nums)):
+            if i > startIndex and nums[i] == nums[i-1]:		 #本层的第一个选择，无论选什么都不会和“本层之前的自己”重复 
+                continue #这里不用break，因为后面的还有呢，又不是没了
+            self.path.append(nums[i])
+            self.result.append(self.path[:])
+            self.backtracking(nums,i+1)
+            self.path.pop()
+
+
+    def subsetsWithDup(self, nums: list[int]) -> list[list[int]]:
+        self.result=[]
+        self.path=[]
+        self.result.append([])
+        nums.sort()
+        self.backtracking(nums,0)
+        return self.result
+    
+```
+
+
+
+
+
+## 非递减子序列
+
+[491. 非递减子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/non-decreasing-subsequences/)
+
+![image-20261013180846911](./assets/image-20261013180846911.png)
+
+
+
+
+
+###  思路
+
+1.此题是无序的，所以之前的完全不适用了
+
+2.用集合set来储存每一层使用过的节点， set每一层都是自己新定义的
+
+3.新的nums【i】 和self.path比较
+
+### 易错点：
+
+1.无序数组
+
+```python
+#判断要不要continue的时候  我写的nums[i]<nums[i-1]  但这个是有序的时候的，此题为无序
+if nums[i] in used or nums[i]<nums[i-1]
+```
+
+
+
+
+
+###！！！！ 放在for里面和放在递归开头其实没啥区别，因为这两个顺序完全是一样的，进入了下个递归就要添加result ，习惯一种方法即可
+
+![image-20261013181917233](./assets/image-20261013181917233.png)
+
+### 伪代码
+
+```python
+										1.添加result摆放的位置在外面
+class Solution:
+    def backtracking(self,nums,startIndex):
+        if len(self.path)>1:
+            self.result.append(self.path[:])
+
+        used=set()#每一层都是新定义的set
+        for i in range(startIndex,len(nums)):
+            if nums[i] in used or (self.path and nums[i]<self.path[-1]):  #注意这里适合self.path比较
+                continue
+            used.add(nums[i]) 
+            self.path.append(nums[i])
+            self.backtracking(nums,i+1)
+            self.path.pop()
+
+
+    def findSubsequences(self, nums: list[int]) -> list[list[int]]:
+        self.result=[]
+        self.path=[]
+        self.backtracking(nums,0)
+        return self.result
+    
+    		
+    										2.添加result的位置在for里面
+    class Solution:
+    def backtracking(self,nums,startIndex):
+
+
+        used=set()
+        for i in range(startIndex,len(nums)):
+            if nums[i] in used or (self.path and nums[i]<self.path[-1]):
+                continue
+            used.add(nums[i]) 
+            self.path.append(nums[i])
+            if len(self.path)>1:
+                self.result.append(self.path[:])
+            self.backtracking(nums,i+1)
+            self.path.pop()
+
+
+    def findSubsequences(self, nums: list[int]) -> list[list[int]]:
+        self.result=[]
+        self.path=[]
+        self.backtracking(nums,0)
+        return self.result
+```
 

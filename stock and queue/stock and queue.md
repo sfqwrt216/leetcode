@@ -553,7 +553,7 @@ class Myqueue:
             self.que.popleft()
 
     
-    def my_push(self,value):  #如果滑动窗口新输入的值找到自己的位置，比他小的直接弹出去pop
+    def my_push(self,value):  #如果滑动窗口新输入的值找到自己的位置，比他小的直接弹出去pop，比他小加入que也无大碍
         while self.que and value >self.que[-1]:       
             self.que.pop()
         self.que.append(value)
@@ -579,6 +579,35 @@ class Solution:
         
         return result
         
+        
+        
+        									2.不构造队列，直接用deque
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        slow=0
+        fast=k-1
+        result=[]
+
+        myque=deque()
+        for i in range(0,k): #先存入这前k个数
+            while myque and nums[i] >=nums[ myque[-1]]:
+                myque.pop()
+            myque.append(i)
+        
+        result.append(nums[myque[0]])
+        slow+=1
+        fast+=1
+
+        while fast<len(nums):    #边界这里也写错了
+            if myque[0] < slow:	#一定要用索引去比较而不是用值，因为可能存在很多一样的值
+                myque.popleft()
+            while myque and nums[fast]>nums[myque[-1]]:											#如果要弹出的话一定要判断是否还有deque
+                myque.pop()
+            myque.append(fast)
+            result.append(nums[myque[0]])   
+            slow+=1
+            fast+=1
+        return result
 ```
 
 
@@ -600,6 +629,10 @@ class Solution:
 ****
 
 ### 易错点：
+
+#如果要弹出的话一定要判断是否还有deque  ：          while myque and nums[fast]>nums[myque[-1]]:		 
+
+nums【】 还是索引 一定要搞清楚
 
 ### 知识点：
 
