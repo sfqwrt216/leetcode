@@ -416,6 +416,45 @@ class Solution:
 ### 伪代码
 
 ```python
+									1.用set（）去重
+class Solution:
+    def backtracking(self, candidates: list[int], target: int, curr_sum: int, start_index: int):
+        # 终止条件：如果当前和等于目标值，保存结果并返回
+        if curr_sum == target:
+            self.result.append(self.path[:])
+            return
+        
+        # 定义 set 对本层元素去重
+        used_set = set()
+        
+        for i in range(start_index, len(candidates)):
+            # 剪枝：如果当前和加上当前元素已经超过目标值，因为数组已排序，后面的更大，直接结束循环
+            if curr_sum + candidates[i] > target:
+                break
+            # 如果本层已经使用过该元素，则跳过
+            if candidates[i] in used_set:
+                continue
+            used_set.add(candidates[i]) 
+            curr_sum += candidates[i]    
+            self.path.append(candidates[i]) 
+            # 递归，注意这里是 i + 1，因为每个数字在每个组合中只能用一次
+            self.backtracking(candidates, target, curr_sum, i + 1)
+            curr_sum -= candidates[i]
+            self.path.pop()
+            
+    def combinationSum2(self, candidates: list[int], target: int) -> list[list[int]]:
+        self.result = []
+        self.path = []
+        
+        # 去重前必须排序，让相同的元素相邻
+        candidates.sort()
+        
+        self.backtracking(candidates, target, 0, 0)
+        return self.result
+
+
+
+										2.排序之后用算法去重
 class Solution:
 
     def backtracking(self,candidates,target,startIndex):
@@ -434,7 +473,7 @@ class Solution:
             self.sum-=candidates[i]
             self.path.pop()
 
-    def combinationSum2(self, candidates: list[int], target: int) -> list[list[int]]:
+    def combinationSum2(self, candid	ates: list[int], target: int) -> list[list[int]]:
         self.result=[]
         self.path=[]
         self.sum=0
@@ -648,6 +687,16 @@ class Solution:
 
 ## 78子集
 
+子集I   是 不重复的数组返回子集    子集II是重复的数组返回子集
+
+1.子集I和其他的区别就在于 每path改变一次就要result 去append一次
+
+2.子集II 区别在要排序之后还要去重         if i > startIndex and nums[i] == nums[i-1]:	
+
+
+
+
+
 [78. 子集 - 力扣（LeetCode）](https://leetcode.cn/problems/subsets/description/)
 
 ![image-20261013164846418](./assets/image-20261013164846418.png)
@@ -721,6 +770,8 @@ class Solution:
 
 [90. 子集 II - 力扣（LeetCode）](https://leetcode.cn/problems/subsets-ii/)
 
+![image-20261014000148588](./assets/image-20261014000148588.png)
+
 ![image-20261013171627009](./assets/image-20261013171627009.png)
 
 
@@ -757,6 +808,41 @@ class Solution:
 ### 伪代码
 
 ```python
+										1.使用set（）去重	  也可以用数组去重的
+class Solution:
+    def backtracking(self, nums: list[int], start_index: int):
+        # 收集子集，要放在终止添加的上面，否则会漏掉自己
+        self.result.append(self.path[:])
+        
+        # 定义 set 对本层元素去重
+        used_set = set()
+        
+        for i in range(start_index, len(nums)):
+            # 如果本层已经使用过该元素，则跳过
+            if nums[i] in used_set:
+                continue
+            
+            used_set.add(nums[i])      # 记录这个元素在本层用过了
+            self.path.append(nums[i])  # 处理节点
+            self.backtracking(nums, i + 1) # 递归
+            self.path.pop()            # 回溯，撤销处理的节点
+    def subsetsWithDup(self, nums: list[int]) -> list[list[int]]:
+        self.result = []
+        self.path = []
+        
+        # 去重前必须排序，让相同的元素相邻
+        nums.sort()
+        
+        self.backtracking(nums, 0)
+        return self.result
+
+
+            
+            
+            
+            
+            					2.使用i > startIndex and nums[i] == nums[i-1]算法去重
+
 class Solution:
     def backtracking(self,nums,startIndex):
 
@@ -766,6 +852,7 @@ class Solution:
                 continue #这里不用break，因为后面的还有呢，又不是没了
             self.path.append(nums[i])
             self.result.append(self.path[:])
+            
             self.backtracking(nums,i+1)
             self.path.pop()
 
@@ -777,6 +864,9 @@ class Solution:
         nums.sort()
         self.backtracking(nums,0)
         return self.result
+    
+    
+    										  也可以用数组去重的
     
 ```
 
@@ -868,4 +958,472 @@ class Solution:
         self.backtracking(nums,0)
         return self.result
 ```
+
+
+
+
+
+
+
+
+
+
+
+## 46全排列
+
+
+
+排列：全部的数字都要用上才叫排列，所以长度不需要再去判断了，也不需要startIndex，因为本来就需要全部遍
+
+不重复的数组话，用set和数组都可以 ，因为都能实现判断是否使用过
+
+重复的数组话，只能用数组，因为set只能存储不重复的，存不了重复的
+
+
+
+而且排列开始不需要传递startIndex，因为全排列，全部都要进去
+
+
+
+[46. 全排列 - 力扣（LeetCode）](https://leetcode.cn/problems/permutations/description/)
+
+![image-20261013210342535](./assets/image-20261013210342535.png)
+
+
+
+###  思路
+
+在这里就不需要这一层是否重复了，因为这是全排列，全局定义self.used ，遇到有的就直接continue即可 ，记得去撤销标记 self.used.remove(nums[i]) 
+
+上一题是这一层不能重复，也就是比如：4 7 7 8   478 其中两个7都会出现，就每一层 去重
+
+
+
+**数组版本的空间复杂度要小一点，可以就学数组的也不赖**
+
+**#这里没有排列是因为根本不需要去有判断是否有相同元素重复的情况**
+
+### 伪代码
+
+```python
+    								1.数组版本
+class Solution:
+    def backtracking(self,nums):
+        if self.path and len(self.path)==len(nums):
+            self.result.append(self.path[:])
+            
+
+        
+        for i in range(0,len(nums)):
+            if self.used[i]:
+                continue
+            self.used[i]=True
+            self.path.append(nums[i])
+            self.backtracking(nums)
+            self.path.pop()
+            self.used[i] = False  	 # 回溯：撤销标记 ← 关键！
+
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        self.used=[False]*len(nums)
+        self.result=[]
+        self.path=[]										#这里没有排列是因为根本不需要去有判断是否有相同元素重复的情况
+        self.backtracking(nums)
+        return self.result	
+    
+    
+    
+   									 2.set（）版本
+class Solution:
+    def backtracking(self,nums):
+        if self.path and len(self.path)==len(nums):
+            self.result.append(self.path[:])
+            
+
+        for i in range(0,len(nums)):
+            if nums[i] in self.used:
+                continue
+            self.used.add(nums[i])
+            self.path.append(nums[i])
+            self.backtracking(nums)
+            self.path.pop()
+            self.used.remove(nums[i])    # 回溯：撤销标记 ← 关键！
+
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        self.used=set() 
+        self.result=[]
+        self.path=[]
+        self.backtracking(nums)
+        return self.result
+    
+    
+
+```
+
+
+
+
+
+
+
+
+
+## 全排列II
+
+[47. 全排列 II - 力扣（LeetCode）](https://leetcode.cn/problems/permutations-ii/)
+
+![image-20261013214325088](./assets/image-20261013214325088.png)
+
+
+
+
+
+###  思路
+
+这里有重复的元素，如果可以的话就排列一下
+
+
+
+用nums[i-]  的 时候，记得判断i>0               if i > 0 and nums[i] == nums[i-1]
+
+### 伪代码
+
+```python
+									  1.使用set（）去重
+class Solution:
+    def backtracking(self, nums: list[int], used: list[bool]):
+        # 终止条件：当前排列长度等于原数组长度，说明找到了一个全排列
+        if len(self.path) == len(nums):
+            self.result.append(self.path[:])
+            return
+        
+        # 定义 set 对本层元素去重
+        used_set = set()
+        
+        for i in range(len(nums)):
+            # 如果当前元素在本层已经使用过，则跳过
+            if nums[i] in used_set:
+                continue
+            
+            # 如果当前元素在全局(当前排列路径中)已经被使用过，则跳过
+            if used[i]:
+                continue
+            
+            used_set.add(nums[i])  
+            used[i] = True          
+            self.path.append(nums[i]) 
+            self.backtracking(nums, used)
+            self.path.pop()
+            used[i] = False
+    def permuteUnique(self, nums: list[int]) -> list[list[int]]:
+        self.result = []
+        self.path = []
+        
+        # 去重前必须排序，让相同的元素相邻
+        nums.sort()
+        
+        # used 数组用于标记 nums 中的元素是否已经在当前排列中被使用
+        used = [False] * len(nums)
+        
+        self.backtracking(nums, used)
+        return self.result
+
+
+
+
+										2.使用数组去重
+class Solution:
+    def backtracking(self,nums):
+        if self.path and len(self.path)==len(nums):
+            self.result.append(self.path[:])
+            
+
+        
+        for i in range(0,len(nums)):
+            if self.used[i]: #如果这个数已经用完了  # 剪枝1：下标 i 已经用过
+                continue
+           
+            # 值相同 且 前一个相同值self.used是False → 说明前一个在"本层"已经选过了那这个相同的值也不用去排序了
+             # 剪枝2：树层去重
+            if i > 0 and nums[i] == nums[i-1] and not self.used[i-1]:
+                continue
+
+            self.used[i]=True           #标记使用过了
+            self.path.append(nums[i])
+            self.backtracking(nums)
+            self.path.pop()
+            self.used[i] = False  	 # 回溯：撤销标记 ← 关键！
+
+    def permuteUnique(self, nums: list[int]) -> list[list[int]]:
+        self.used=[False]*len(nums)
+        self.result=[]
+        self.path=[]
+        nums.sort()  # ← 关键！必须排序
+        self.backtracking(nums)
+        return self.result
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 332重新安排行程
+
+[332. 重新安排行程 - 力扣（LeetCode）](https://leetcode.cn/problems/reconstruct-itinerary/description/)
+
+![image-20261014150955201](./assets/image-20261014150955201.png)
+
+
+
+
+
+###  思路
+
+### 易错点：
+
+### 知识点：
+
+```python
+ 
+
+```
+
+
+
+
+
+### 伪代码
+
+```python
+走到哪走到头（没票了），就在哪append，然后原路退回去，退回去接着走剩下的票。
+旗子是"从终点插回起点"的，所以最后要倒过来读。
+
+
+class Solution:
+    
+    def dfs(self, cur_from, tickets_dict, result):
+        while tickets_dict[cur_from]:          # 还有出边
+            cur_to = tickets_dict[cur_from].pop()   # 贪心走最小
+            self.dfs(cur_to, tickets_dict, result)
+        result.append(cur_from)                # 走完了才收集		result从后往收集的，最后要反转的，
+    
+    def findItinerary(self, tickets: list[list[str]]) -> list[str]:
+        tickets_dict = defaultdict(list) #定义字典储存机票
+        
+        #把机票信息添加到字典
+        for src, dst in tickets:
+            tickets_dict[src].append(dst)
+          #反向排序把字母小的放后面
+        for src in tickets_dict:
+            tickets_dict[src].sort(reverse=True)   # 反向排序配合 pop
+        
+        result = []
+        self.dfs("JFK", tickets_dict, result)
+        return result[::-1]
+    
+    
+    
+    
+    
+    		1.超时代码
+    
+    class Solution:
+    def backrtacking(self,tickets_dict,tickets):
+        if len(self.result)==len(tickets)+1:
+            return True
+        
+        cur_from=self.result[-1]
+
+        for i in range(len(tickets_dict[cur_from])):
+            cur_to=tickets_dict[cur_from].pop(i)
+            self.result.append(cur_to)
+
+            if self.backrtacking(tickets_dict,tickets):
+                return True
+
+            #走到这里了，那就说明没通，把票插回去
+            self.result.pop() 
+            tickets_dict[cur_from].insert(i,cur_to) #i是下标位置，cur_to是原来pop出来的
+
+
+    def findItinerary(self, tickets: list[list[str]]) -> list[str]:
+        self.result=[] #返回结果
+
+        tickets_dict=defaultdict(list)  #用字典储存飞机票信息
+
+        #遍历飞机票，把它存到字典里
+        for src,dst in tickets:
+            tickets_dict[src].append(dst)
+
+        for src in tickets_dict:
+            tickets_dict[src].sort()
+
+        self.result.append("JFK")
+        if self.backrtacking(tickets_dict,tickets):
+            return self.result
+        return []
+```
+
+
+
+
+
+字典里面是这样储存的
+
+![image-20261014154246675](./assets/image-20261014154246675.png)
+
+
+
+
+
+
+
+
+
+## N皇后
+
+![image-20261014165440851](./assets/image-20261014165440851.png)
+
+
+
+
+
+![image-20261014171353066](./assets/image-20261014171353066.png)
+
+###  思路
+
+先写一个判断是否可以放这的函数is_valid  ， 然后每一层循环遍历每个可以放的位置，
+
+
+
+### 伪代码
+
+```python
+class Solution:
+    def is_valid(self, row, col, chessboard, n): #要放的皇后的行和列 ，n是棋盘大小
+        # 检查列：上面的行有没有皇后
+        for i in range(row):
+            if chessboard[i][col] == 'Q':
+                return False
+        
+        # 检查 45 度角（左上方向）
+        i, j = row - 1, col - 1
+        while i >= 0 and j >= 0:
+            if chessboard[i][j] == 'Q':
+                return False
+            i -= 1
+            j -= 1
+        
+        # 检查 135 度角（右上方向）
+        i, j = row - 1, col + 1
+        while i >= 0 and j < n:
+            if chessboard[i][j] == 'Q':
+                return False
+            i -= 1
+            j += 1
+        
+        return True
+    
+    def backtracking(self, n, row, chessboard):
+        if row == n:
+            self.result.append([''.join(r) for r in chessboard])
+            return
+        
+        for col in range(0,n):#这一行的每一列我都要试一遍
+            if self.is_valid(row, col, chessboard, n): #没有被之前的皇后绞杀   切片规则 s不包括右边界
+                chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]
+                self.backtracking(n, row + 1, chessboard)
+                #每次递归回来，都要把当前格恢复原样，好让 for 循环试下一个 col。
+                chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]
+    
+    def solveNQueens(self, n: int) -> list[list[str]]:
+        self.result = []
+        chessboard = ['.' * n for _ in range(n)]
+        self.backtracking(n, 0, chessboard)
+        return self.result
+```
+
+
+
+
+
+
+
+
+
+## 解数独
+
+[37. 解数独 - 力扣（LeetCode）](https://leetcode.cn/problems/sudoku-solver/description/)
+
+![image-20261014171636625](./assets/image-20261014171636625.png)
+
+
+
+###  思路
+
+先写一个函数is_valid判断是否可以放 ， 然后两层for循环 遍历一下所有格子 ， 对于空格子就尝试放1-9看看能不能放
+
+### 伪代码
+
+```python
+class Solution:
+    def solveSudoku(self, board: list[list[str]]) -> None:
+        self.backtracking(board)
+    
+    def backtracking(self, board):
+        # 遍历整个棋盘
+        for i in range(len(board)):              # 遍历行
+            for j in range(len(board[0])):       # 遍历列
+                if board[i][j] != '.':           # 这个格子已经有数字了，跳过
+                    continue
+                
+                # 空格子，尝试放 1~9
+                for k in range(1, 10):
+                    k = str(k)                   # 转成字符 '1'~'9'
+                    if self.is_valid(i, j, k, board):   # (i,j) 放 k 是否合法
+                        board[i][j] = k          # 放 k
+                        if self.backtracking(board):    # 找到合适一组立即返回
+                            return True
+                        board[i][j] = '.'        # 回溯，撤销 k
+                
+                # 9 个数都试完了，都不行，返回 False
+                return False
+        
+        # 遍历完没返回 False，说明找到合适棋盘了
+        return True
+    
+    def is_valid(self, row, col, val, board):
+        # 判断行里是否重复
+        for i in range(9):
+            if board[row][i] == val:
+                return False
+        
+        # 判断列里是否重复
+        for j in range(9):
+            if board[j][col] == val:
+                return False
+        
+        # 判断 3x3 九宫格里是否重复
+        start_row = (row // 3) * 3
+        start_col = (col // 3) * 3
+        for i in range(start_row, start_row + 3):
+            for j in range(start_col, start_col + 3):
+                if board[i][j] == val:
+                    return False
+        
+        return True
+```
+
+
+
+![image-20261014181716564](./assets/image-20261014181716564.png)
 
