@@ -42,6 +42,13 @@
 
 
 
+###  背包问题
+
+2. 可以重复选 ：完全背包 一维数组的for都是正序        
+3. 不可以重复选 ： 01背包一维数组 外层物品for正序 ，内层背包for倒序    
+4. 考虑顺序 ： 排列 ：背包在外层for   物品在内层for
+5. 不考虑顺序 ：组合  物品在外层for   ，背包在内层for
+
 ## 1.斐波那契数  
 
 https://leetcode.cn/problems/fibonacci-number/
@@ -1042,6 +1049,14 @@ class Solution:
 
 排列数           									 所以外层必须是**容量**，内层是物品。
 
+一维数组在01背包内层倒序，在完全背包内层正序
+
+
+
+
+
+
+
 
 
 
@@ -1053,6 +1068,22 @@ class Solution:
 二维数组进行for都是正序 
 
 
+
+
+
+
+
+初始化dp【0】 ：  
+
+70爬楼梯 ：说的是方案所以dp【0】=1   所以取的时候不需要 +1 ,因为就是把方案平移过来了
+
+零钱兑换：最少硬币  dp【0】=0  取的时候就需要之前的dp【j-i】+1
+
+完全平方数：最少个数 dp【0】=0 取的时候就需要之前的dp【j-i】+1
+
+
+
+<img src="./assets/image-20261024105200319.png" alt="image-20261024105200319" style="zoom: 67%;" />
 
 
 
@@ -1195,6 +1226,231 @@ class Solution:
         
         							2.二维数组 (不好写，不写了)
           
+```
+
+
+
+
+
+## 70爬楼梯
+
+[70. 爬楼梯 - 力扣（LeetCode）](https://leetcode.cn/problems/climbing-stairs/description/)
+
+![image-20261024093409410](./assets/image-20261024093409410.png)
+
+
+
+###  思路
+
+1.dp【j】含义 ： 到达n节台阶最多含有dp【j】种方法
+
+2. 可以重复选 ：完全背包 一维数组的for都是正序            
+3. 考虑顺序 ： 排列 ：背包在外层for   物品在内层for
+
+### 伪代码
+
+```python
+#dp【j】含义 ： 到达n节台阶最多含有dp【j】种方法
+# 可以重复选 ：完全背包 ，排列 ：都是正序
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        dp=[0]*(n+1) #
+        dp[0]=1
+
+
+        for j in range(0,n+1):
+            for i in range(1,3):
+                if j-i>=0:
+                    dp[j]=dp[j]+dp[j-i]
+        return dp[n]
+
+```
+
+易错点： 初始化dp【0】=1  即什么都不选也是一种方案     ，dp【1】和dp【2】都别初始化，因为 dp[j]=dp[j]+dp[j-i] ，初始化了会影响后面结果（）列后面的结果
+
+
+
+
+
+
+
+## 零钱兑换
+
+[322. 零钱兑换 - 力扣（LeetCode）](https://leetcode.cn/problems/coin-change/)
+
+![image-20261024100120961](./assets/image-20261024100120961.png)
+
+
+
+
+
+###  思路
+
+1.dp【j】 含义 ： 凑成amount金额 最少的硬币个数
+
+2.不限个数：完全背包   一维数组for都是正序
+
+3.不管顺序：组合问题 ： 外层物品，内层背包
+
+4.定义初始化数组的时候 ，因为是取min所以要定义为无穷大， 
+
+5.方案最少硬币的时候 取要加1 因为dp含义是最少硬币个数， 之前也是最少硬币 ，加上这个1 
+
+### 伪代码
+
+```python
+									1.组合 1.组合 1.组合 1.组合 1.组合
+#dp【j】 含义 ： 凑成amount金额 最少的硬币个数
+class Solution:
+    def coinChange(self, coins: list[int], amount: int) -> int:
+        dp=[float('inf')]*(amount+1)
+
+        dp[0]=0
+
+        for i in range(0,len(coins)):#组合外层物品
+            for j in range(0,amount+1):#内层背包
+                if j-coins[i]>=0:
+                    dp[j]=min(dp[j],dp[j-coins[i]]+1)  # 不取 ，取 取的话要+1，因为这也是一个硬币 ，方案个数的话就不用加1
+        # 5. 如果最终结果还是无穷大，说明没有组合能凑出，返回 -1
+        if dp[amount] == float('inf'):
+            return -1
+        return dp[amount]
+    
+    
+    							2.排列2.排列2.排列2.排列（仅仅就是把两个for循环代码换了个位置，仅此而已）
+class Solution:
+    def coinChange(self, coins: list[int], amount: int) -> int:
+        dp=[float('inf')]*(amount+1)
+        dp[0]=0
+
+        for j in range(1,amount+1):
+            for i in range(0,len(coins)):
+                if j-coins[i]>=0:
+                    dp[j]=min(dp[j],dp[j-coins[i]]+1)
+
+        # 5. 如果最终结果还是无穷大，说明没有组合能凑出，返回 -1
+        if dp[amount] == float('inf'):
+            return -1
+        return dp[amount]
+```
+
+易错点：
+
+1.定义初始化数组的时候 ，因为是取min所以要定义为无穷大， 
+
+2.方案最少硬币的时候 取要加1 因为dp含义是最少硬币个数， 之前也是最少硬币 ，加上这个1 
+
+<img src="./assets/image-20261024101257663.png" alt="image-20261024101257663" style="zoom:67%;" />
+
+
+
+## 279 完全平方数
+
+![image-20261024105054523](./assets/image-20261024105054523.png)
+
+
+
+
+
+###  思路
+
+**1.dp【j】 含义 ：和为n的完全平方最少数量**
+
+**2.物品	i	 从1到 max_i   max_i = int(n ** ** **0.5)  也就是最大的根号值 就是物品**
+
+**3.物品的价值是i	i*i**
+
+### 伪代码
+
+```python
+#dp【j】 含义 ：和为n的完全平方最少数量
+class Solution:
+    def numSquares(self, n: int) -> int:
+        dp=[float('inf')]*(n+1)
+
+        dp[0]=0
+        max_i = int(n ** 0.5)
+
+        for  i in range(1,max_i+1):
+            for j in range(1,n+1):
+                if j>=i*i:
+                    dp[j]=min(dp[j],dp[j-i*i]+1)  # 不取 ，取 然后 把这个最少数量+1
+        return dp[n]
+
+```
+
+
+
+
+
+## 139单词拆分
+
+[139. 单词拆分 - 力扣（LeetCode）](https://leetcode.cn/problems/word-break/)
+
+![image-20261024164300317](./assets/image-20261024164300317.png)
+
+
+
+
+
+###  思路
+
+1.**`dp[i]` 表示：字符串 `s` 的【前 `i` 个字符】（也就是 `s[0 : i]` 这个子串），能否被空格拆分成字典**
+
+**s[i:j]  截取字符串 `s` 中，从索引 `i` 开始，一直截取到索引 `j` 之前（不包括 `j`）的这一段子串。**
+
+2.**物品就是你在内层循环里，通过 `s[i:j]` 截取出来的那个“子串”。**
+
+3.**背包就是字符串 `s` 的前缀长度**
+
+4.但在 139 题里，**物品（单词）不是现成的数组，而是藏在字符串 `s` 里的。**
+
+5.如果s[i:j]在 wordset里面 并且 dp【i】==True
+
+### 伪代码
+
+```python
+											1.完全背包-排列
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        wordset=set(wordDict)
+        dp=[False]*(len(s)+1)
+        dp[0]=True
+
+        for j in range(1,len(s)+1):
+            for i in range(0,j):
+                if s[i:j] in  wordDict and dp[i]==True :
+                    dp[j]=True
+                    break
+        return dp[len(s)]
+
+
+
+
+
+
+
+										2.回溯算法 -----------但是会超时
+class Solution:
+    def wordBreak(self, s: str, wordDict: list[str]) -> bool:
+        # 将列表转为集合，提高查找效率 O(1)
+        wordSet = set(wordDict)
+        # 在主函数中调用辅助函数
+        return self._backtracking(s, wordSet, 0)
+        
+    def _backtracking(self, s: str, wordSet: set, startIndex: int) -> bool:
+        # 递归终止条件
+        if startIndex >= len(s):
+            return True
+            
+        # 遍历所有可能的分割点
+        for i in range(startIndex, len(s)):
+            word = s[startIndex : i + 1]
+            # 如果当前单词在字典中，且剩下的字符串也能拆分成功
+            if word in wordSet and self._backtracking(s, wordSet, i + 1):
+                return True
+                
+        return False
 ```
 
 
