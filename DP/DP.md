@@ -34,6 +34,7 @@
 
 ```python
         dp = [[0] * n for _ in range(m)] # 定义一个m行 n列的二维数组   但是mn不能交换位置的
+        dp=[[0]*len(nums2) for _ in range(0,len(nums1))]  #第一个循环一定要是列 ，  数组定义先行后列 循环定义先列后行
 ```
 
 <img src="./assets/image-20261021103815640.png" alt="image-20261021103815640" style="zoom:150%;" />
@@ -48,6 +49,31 @@
 3. 不可以重复选 ： 01背包一维数组 外层物品for正序 ，内层背包for倒序    
 4. 考虑顺序 ： 排列 ：背包在外层for   物品在内层for
 5. 不考虑顺序 ：组合  物品在外层for   ，背包在内层for
+
+
+
+
+
+
+
+### dp数组何时取max何时+1即可
+
+当dp数组定义为：text1 的前 i 个字符和 text2 的前 j 个字符中，最长公共子序列的长度
+
+  因为他是子序列，可能不连续，所以要取max把他连续起来最大的dp数组，最后返回dp【m】【n】即可
+
+```python
+            if text1[i-1]==text2[j-1]:
+                dp[i][j]=dp[i-1][j-1]+1
+            else :
+                dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+```
+
+
+
+
+
+
 
 ## 1.斐波那契数  
 
@@ -1451,6 +1477,933 @@ class Solution:
                 return True
                 
         return False
+```
+
+
+
+
+
+# 打劫问题
+
+## 198打家劫舍
+
+[198. 打家劫舍 - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber/description/)
+
+<img src="./assets/image-20261024193059352.png" alt="image-20261024193059352" style="zoom:50%;" />
+
+
+
+取最大能偷的金额一般都是   max
+
+
+
+
+
+###  思路
+
+1.取最大能偷的金额一般都是   max（不取，取）
+
+2.dp[i]：考虑下标i（包括i）以内的所有房屋，最多可以偷窃的⾦额为dp[i]。
+
+3.（注意这⾥是考虑，并不是⼀定要偷i-1房，这是很多同学容易混淆的点）  
+
+### 伪代码
+
+```python
+#dp[i]：考虑下标i（包括i）以内的所有房屋，最多可以偷窃的⾦额为dp[i]。
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if len(nums)==0: return 0
+        if len(nums)==1: return nums[0]    
+
+        dp=[0]*(len(nums)+1)
+        dp[0]=nums[0]
+        dp[1]=max(nums[0],nums[1])
+        for j in range(2,len(nums)):
+            dp[j]=max(dp[j-1],dp[j-2]+nums[j]) #不偷， 偷
+
+        return dp[len(nums)-1]           
+
+        
+```
+
+
+
+
+
+## 213打家劫舍II
+
+<img src="./assets/image-20261024194443692.png" alt="image-20261024194443692" style="zoom:50%;" />
+
+
+
+###  思路
+
+1.**`dp[i]` 表示：从下标 `start` 开始，一直偷到下标 `i`（包含 `i`），所能偷窃到的最高金额**
+
+<img src="./assets/image-20261024194748603.png" alt="image-20261024194748603" style="zoom:67%;" />
+
+情况三和二包括了情况一    考虑首尾元素，但不一定要选他啊，所以是包含的情况一 
+
+
+
+
+
+2.极端值判定， start==end ，也就是长度为2的时候
+
+<img src="./assets/image-20261024204454027.png" alt="image-20261024204454027" style="zoom: 67%;" />
+
+### 伪代码
+
+```python
+# dp[i] 表示：从下标 start 开始，一直偷到下标 i（包含 i），所能偷窃到的最高金额
+class Solution:
+    def robrange(self,start,end,nums):#数组下标
+        if start==end:
+            return nums[start]
+        dp = [0] * len(nums)
+        #dp=[0]*(end-start+1)  直接用数组长度得了懒得计算这么多了
+        dp[start]=nums[start]
+        dp[start+1]=max(nums[start],nums[start+1])
+        for i in range(start+2,end+1):
+            dp[i]=max(dp[i-1],dp[i-2]+nums[i])
+        return dp[end]
+
+    
+    def rob(self, nums: list[int]) -> int:
+        if len(nums)==0: return 0
+        if len(nums)==1: return nums[0]    
+        result1=self.robrange(0,len(nums)-2,nums) #包括首 
+        result2=self.robrange(1,len(nums)-1,nums) #包括尾
+        return max(result1,result2)
+```
+
+
+
+
+
+
+
+
+
+## 打家劫舍III
+
+[337. 打家劫舍 III - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber-iii/)
+
+<img src="./assets/image-20261025113600874.png" alt="image-20261025113600874" style="zoom:50%;" />
+
+<img src="./assets/image-20261025114828813.png" alt="image-20261025114828813" style="zoom:67%;" />
+
+###  思路
+
+
+
+1.用二叉树的后序遍历，返回一个元组，（偷该节点，不偷该节点）的最大价值
+
+2.不偷该节点  ： 那就可以取左子树偷与不偷的最大值 +	右子树偷与不偷的最大值
+
+2.偷该节点： 左不偷（不代表他就是0，只是代表左边子树不偷这个节点，）+右不偷 ，+ 该节点的值
+
+
+
+
+
+### 伪代码
+
+```python
+											后序遍历 ： 左右中 
+class Solution:
+    def dfs(self,node):
+        if node is None:
+            return 0,0 
+        l_rob,l_not_rob=self.dfs(node.left)  #左子树
+        r_rob,r_not_rob=self.dfs(node.right) #右子树
+
+        cur_rob=l_not_rob+r_not_rob+node.val 					#当前节点偷 ：左子树不偷 右子树不偷  当前节点偷
+        cur_not_rob=max(l_rob,l_not_rob)+max(r_rob,r_not_rob)    #当前节点不偷  ： 那就左子树选择最大的   右子树也选择最大的
+
+        return cur_rob,cur_not_rob
+
+    def rob(self, root: TreeNode | None) -> int:
+        result1, result2=self.dfs(root)
+        result=max(result1,result2)
+        return result
+        
+```
+
+
+
+# 股票问题
+
+## 买卖股票最佳时机（买卖一次）
+
+<img src="./assets/image-20261025115946008.png" alt="image-20261025115946008" style="zoom:50%;" />
+
+###  思路
+
+
+
+1.dp数组：（其实这题用这个方法没必要呀）
+
+**dp i 0   表示第 i 天持有股票的最大现金，dpi  1  表示第 i 天不持有股票的最大现金**
+
+<img src="./assets/image-20261026103229073.png" alt="image-20261026103229073" style="zoom:50%;" />
+
+1.2 会发现后面的dp只与前面一个状态的dp有关，所以只用两个变量即可
+
+
+
+**2.贪心**
+
+​	**会问后面更新的low最小值就是参与result最大值的计算吗？不一定呀，因为还会进行result取max**
+
+3. 暴力无话可说 ，一个for把他当成最小值，一个for把他当成最大值
+
+### 伪代码
+
+```python
+													1.dp数组 时间复杂度O（N）  空间复杂度O（N） 
+#dp【i】【0】  表示第 i 天持有股票的最大现金，  dp【i】【1】 表示第 i 天不持有股票的最大现金      注意是最大现金！！！！！！最大！！！！！！
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        if not prices:  # 防止空数组报错
+            return 0
+        dp=[[0]*2 for _ in range(0,len(prices))]
+
+        dp[0][0]=-prices[0]  
+        dp[0][1]=0
+
+        for i in range(1,len(prices)):
+            dp[i][0]=max(dp[i-1][0],-prices[i])  # 之前就持有    今天刚持有
+            dp[i][1]=max(dp[i-1][1],dp[i-1][0]+prices[i]) # 之前就卖出  今天才卖出   dp【i】【1】 继承dp【i】【0】 状态
+        return dp[len(prices)-1][1] 
+
+
+    												1.2 两个dp 时间复杂度O（N）  空间复杂度O（1） 
+  # dp0 代表持有股票的钱，dp1 代表不持有股票的钱
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        if not prices:
+            return 0
+        
+        # dp0 代表持有股票的钱，dp1 代表不持有股票的最大钱
+        dp0 = -prices[0]
+        dp1 = 0
+        
+        for i in range(1, len(prices)):
+            # 注意：这里必须用临时变量或者调整顺序，保证计算 dp1 时用的 dp0 还是昨天的
+            dp1 = max(dp1, dp0 + prices[i])  #不持有股票     持有然后卖出
+            dp0 = max(dp0, -prices[i])			# 持有股票 ， 如果持有的是当前股票 
+            
+        return dp1
+
+
+
+												2.贪心
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        if not prices: 
+            return 0
+        result=0 #记录遍历到这个节点的时候的结果最大值
+        low=prices[0] #记录遍历到的最小值			
+
+        for i in range(1,len(prices)):
+            low=min(low,prices[i]) #找到目前遍历到的最小值
+            result=max(result,prices[i]-low)
+
+        return result
+
+
+												3.暴力搜索（但是会超时）
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        result=0
+
+        for i in range(0,len(prices)):
+            for j in range(i+1,len(prices)):
+                result=max(result,prices[j]-prices[i])
+        return result
+```
+
+
+
+
+
+
+
+
+
+## 买卖股票最佳时机II（无限买卖）
+
+###  思路
+
+<img src="./assets/image-20261026112109992.png" alt="image-20261026112109992" style="zoom:50%;" />
+
+![image-20261026111958385](./assets/image-20261026111958385.png)
+
+### 伪代码
+
+```python
+													1.DP数组法
+#dp【i】【0】  表示第 i 天持有股票的最大现金，  dp【i】【1】 表示第 i 天不持有股票的最大现金      注意是最大现金！！！！！！最大！！！！！！
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        if not prices:  # 防止空数组报错
+            return 0
+        dp=[[0]*2 for _ in range(0,len(prices))]
+
+        dp[0][0]=-prices[0]
+        dp[0][1]=0
+
+        for i in range(1,len(prices)):
+            dp[i][0]=max(dp[i-1][0],dp[i-1][1]-prices[i]) #和之前唯一不同的就是 ：本题可以重复卖出 ，所以dp【i-1】【1】是最大利润
+            dp[i][1]=max(dp[i-1][1],dp[i-1][0]+prices[i]) 
+        return dp[len(prices)-1][1]
+    
+    												2.滚动数组法
+
+  # dp0 代表持有股票的最大钱，dp1 代表不持有股票的最大钱
+class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        if not prices:
+            return 0
+        
+        # dp0 代表持有股票的钱，dp1 代表不持有股票的最大钱
+        dp0 = -prices[0]
+        dp1 = 0
+        
+        for i in range(1, len(prices)):
+            dp0 = max(dp0, dp1-prices[i])			# 之前持有股票 和  今天买入  取最大值 
+            dp1 = max(dp1, dp0 + prices[i])  		#不持有股票     持有但是然后卖出 取最大值
+            
+        return dp1
+    
+    
+    
+    												3.贪心
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        profit = 0
+        for i in range(1, len(prices)):
+            tmp = prices[i] - prices[i - 1]
+            if tmp > 0: profit += tmp
+        return profit
+
+```
+
+
+
+
+
+
+
+
+
+## 买卖股票最佳时机III（买卖俩次）
+
+<img src="./assets/image-20261026153653721.png" alt="image-20261026153653721" style="zoom:50%;" />
+
+###  思路
+
+1.别害怕其实就是专门写了 五个状态来表示
+
+
+
+### 伪代码
+
+```python
+
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices:
+            return 0
+            
+        n = len(prices)
+        # dp[i][j] 表示第 i 天，状态为 j 时的最大现金
+        # j 的取值及含义：
+        # 0: 没有操作
+        # 1: 第一次持有股票
+        # 2: 第一次不持有股票（完成了一次买卖）
+        # 3: 第二次持有股票
+        # 4: 第二次不持有股票（完成了两次买卖）
+        dp = [[0] * 5 for _ in range(n)]
+        
+        # 初始化第 0 天的情况
+        dp[0][1] = -prices[0] # 第一天买入，现金为负
+        dp[0][3] = -prices[0] # 第一天买入并卖出再买入（虽然不赚，但允许此操作），现金为负
+        
+        for i in range(1, n):
+            # 状态 0：一直没操作，现金为 0
+            dp[i][0] = dp[i - 1][0]                                         							#继承之前的状态去执行
+            
+            # 状态 1：第一次持股。可能是昨天就持股，或者今天刚买入										  #继承之前的状态去执行
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i])
+            
+            # 状态 2：第一次不持股。可能是昨天就不持股，或者今天刚卖出										  #继承之前的状态去执行
+            dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] + prices[i])
+            
+            # 状态 3：第二次持股。可能是昨天就第二次持股，或者今天刚进行第二次买入							  #继承之前的状态去执行
+            dp[i][3] = max(dp[i - 1][3], dp[i - 1][2] - prices[i])
+            
+            # 状态 4：第二次不持股。可能是昨天就第二次不持股，或者今天刚完成第二次卖出
+            dp[i][4] = max(dp[i - 1][4], dp[i - 1][3] + prices[i])
+            
+        return dp[n - 1][4]
+```
+
+
+
+
+
+
+
+
+
+
+
+## 买卖股票最佳时机IV（买卖k次）
+
+<img src="./assets/image-20261026155132920.png" alt="image-20261026155132920" style="zoom:50%;" />
+
+###  思路
+
+其实和上一题买卖股票最佳时机III（买卖俩次） 是类似的，就相当于把上面的总结了一下  
+
+就直接创建 dp = [[0] * (2 * k + 1) for _ in range(n)]数组  
+
+### 伪代码
+
+```python
+from typing import List
+
+class Solution:
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        if not prices:
+            return 0
+            
+        n = len(prices)
+        # 创建 (n x (2*k+1)) 的二维数组
+        dp = [[0] * (2 * k + 1) for _ in range(n)]
+        
+        # 初始化第 0 天的持股状态（奇数状态）
+        for j in range(1, 2 * k, 2):
+            dp[0][j] = -prices[0]
+            
+        for i in range(1, n): #i是天数， j是后面的操作数
+            dp[i][0] = dp[i - 1][0]
+            
+            for j in range(0, 2 * k - 1, 2):  #实在不理解可以带入k=2  也就是上一题的结果
+                # 买入状态（奇数）
+                dp[i][j + 1] = max(dp[i - 1][j + 1], dp[i - 1][j] - prices[i])
+                # 卖出状态（偶数）
+                dp[i][j + 2] = max(dp[i - 1][j + 2], dp[i - 1][j + 1] + prices[i])
+                
+        return dp[n - 1][2 * k]
+```
+
+
+
+
+
+
+
+## 最佳买卖股票时机含冷冻期
+
+<img src="./assets/image-20261026173248291.png" alt="image-20261026173248291" style="zoom:50%;" />
+
+###  思路
+
+
+
+
+
+这里的 `dp[i][x]` 代表的绝对是**“当前能获得的最大金额（最大利润）**  这里的 `dp[i][x]` 代表的绝对是**“当前能获得的最大金额（最大利润）**
+
+1.持有股票的状态 ： 							1.之前就这个状态          2. 前一天是冷冻期，今天买        3.没有股票，也不处于冷冻期 ，今天买
+
+2.不持有股票 且不持有冷冻期  ： 		 1.之前就这个状态       2.前一天是冷冻期
+
+3.今天卖出股票                    ：        1. 前一天持有股票直接卖出
+
+4.冷冻期                            ：         1.前一天刚卖出
+
+### 伪代码
+
+```python
+							#这里的 dp[i][x] 代表的绝对是“当前能获得的最大金额（最大利润）
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        n = len(prices)
+        if n == 0:
+            return 0
+        
+        # 创建 n 行 4 列的二维数组，初始值全为 0
+        dp = [[0] * 4 for _ in range(n)]
+        
+        # 初始化第 0 天
+        dp[0][0] = -prices[0] # 持有股票
+        
+        for i in range(1, n):
+            # 1. 持有股票的状态
+            # 昨天就持有 / 昨天是状态3今天买入 / 昨天是状态1今天买入
+            dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]))
+            
+            # 2. 不持有股票，且不处于冷冻期（保持卖出状态）
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][3])
+            
+            # 3. 今天卖出股票（明天将进入冷冻期）
+            dp[i][2] = dp[i - 1][0] + prices[i]
+            
+            # 4. 处于冷冻期（昨天刚卖出）
+            dp[i][3] = dp[i - 1][2]
+            
+        # 最后一天的最大利润 = 取最后一天状态 1、2、3 中的最大值
+        return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]))
+```
+
+
+
+
+
+
+
+## 买卖股票最佳时机含手续费
+
+<img src="./assets/image-20261026162911115.png" alt="image-20261026162911115" style="zoom:50%;" />
+
+###  思路
+
+就直接买卖股票最佳时机II（无限买卖）			-fee 即可
+
+### 伪代码
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        if not prices:  # 防止空数组报错
+            return 0
+        dp=[[0]*2 for _ in range(0,len(prices))]
+
+        dp[0][0]=-prices[0]
+        dp[0][1]=0
+
+        for i in range(1,len(prices)):
+            dp[i][0]=max(dp[i-1][0],dp[i-1][1]-prices[i]) #和之前唯一不同的就是 ：本题可以重复卖出 ，所以dp【i-1】【1】是最大利润
+            dp[i][1]=max(dp[i-1][1],dp[i-1][0]+prices[i]-fee) 
+        return dp[len(prices)-1][1]
+```
+
+
+
+
+
+# 字符串问题
+
+## 一个数组
+
+## 最长递增子序列
+
+<img src="./assets/image-20261026215010860.png" alt="image-20261026215010860" style="zoom:50%;" />
+
+###  思路
+
+1.#dp【i】含义：当前，包括 i的最大递增子序列
+
+2.外层for遍历数组   内层for 遍历 i之前的所有值 看看i比numj大  ，最后取max的dp 【i】  
+
+3.每一层 dp【i】都是最大的 ， 所以拿一个变量与之比较result
+
+### 伪代码
+
+```python
+#dp【i】含义：当前，包括 i的最大递增子序列
+class Solution:
+    def lengthOfLIS(self, nums: list[int]) -> int:
+        # 1. 边界情况处理：空数组直接返回 0
+        if not nums:
+            return 0
+            
+        dp=[1]*len(nums)
+        dp[0]=1
+        max_result=1#记录最大值
+
+
+        for i in range(0,len(nums)):#外层循环遍历数组
+            for j in range(0,i):    #内层循环遍历 i之前的所有dp找最大值
+                if nums[i]>nums[j]:
+                    dp[i]=max(dp[i],dp[j]+1)
+
+            max_result=max(dp[i],max_result)
+        return max_result
+
+```
+
+
+
+
+
+## 最长连续递增子序列
+
+<img src="./assets/image-20261027104824690.png" alt="image-20261027104824690" style="zoom:50%;" />
+
+###  思路
+
+1.dp[i] :当前最大的连续递增子序列
+
+2.递增公式: dp【i】 =max（result，dp【i】）他原来的是dp【i】=1 嘛，如果 dp 【i-1 】已经开始递增了，那不就开始叠加了吗
+
+3.每次都result进行一个比较取最大值
+
+### 伪代码
+
+```python
+														1.动态规划
+
+#dp[i] :当前最大的连续递增子序列
+class Solution:
+    def findLengthOfLCIS(self, nums: list[int]) -> int:
+        dp=[1]*len(nums)
+        result=1
+
+        for i in range(1,len(nums)):
+            if nums[i]>nums[i-1]:
+                dp[i]=max(dp[i],dp[i-1]+1)
+            result=max(result,dp[i])
+
+        return  result
+
+
+
+													2.贪心（但是也是最简单的代码的）
+class Solution:
+    def findLengthOfLCIS(self, nums: list[int]) -> int:
+        tem_result=1
+        result=1
+
+        for i in range(1,len(nums)):
+            if nums[i]>nums[i-1]: #一直大就一直加
+                tem_result+=1
+            else:
+                tem_result=1 #一小于重置
+            result=max(result,tem_result)
+
+        return result
+                    
+
+        
+```
+
+
+
+
+
+## 两个数组
+
+## 最长重复子数组
+
+<img src="./assets/image-20261027103125306.png" alt="image-20261027103125306" style="zoom:50%;" />
+
+###  思路
+
+1.dp[i][j] 表示：以 nums1 中第 i 个元素和 nums2 中第 j 个元素作为结尾（即这两个元素必须相等），所能构成的最长公共子数组的长度。
+
+2. 递推公式   dp【i】【j】= dp【i-1】【j-1】+1
+
+   
+
+### 伪代码
+
+```python
+								1.常规递推  时间复杂度： O(n × m)， n 为A⻓度， m为B⻓度  空间复杂度： O(n × m)
+#dp[i][j] 表示：以 nums1 中第 i 个元素和 nums2 中第 j 个元素作为结尾（即这两个元素必须相等），所能构成的最长公共子数组的长度。
+class Solution:
+    def findLength(self, nums1: list[int], nums2: list[int]) -> int:
+
+        dp=[[0]*len(nums2) for _ in range(0,len(nums1))]  #第一个循环一定要是列 ，  数组定义先行后列 循环定义先列后行
+        result=0
+        for i in range(0,len(nums1)):
+            for j in range(0,len(nums2)):
+                
+                if nums1[i]==nums2[j]:
+                    if i==0 or j==0:		#一定要注意后面的代码会不会超过起始边界
+                        dp[i][j]=1
+                    else:
+                        dp[i][j]=dp[i-1][j-1]+1
+
+                result=max(result,dp[i][j])
+        return result
+    
+    
+    
+    								2.  dp数组长度为n+1  和m+1的代码 （因为有索引i-1，j-1，所以这样方便）
+
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        m, n = len(nums1), len(nums2)
+        
+        # 创建 (m+1) x (n+1) 的二维数组，全部初始化为 0
+        # 注意：Python 中一定要用列表推导式，不能用 [[0]*(n+1)]*(m+1)
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        
+        result = 0
+        
+        # 从 1 开始遍历，直到 len()，所以结束条件要 +1
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                # 注意：因为多了一行一列，所以取原数组元素时要 i-1 和 j-1
+                if nums1[i - 1] == nums2[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1 
+                
+                # 只有在匹配成功时，dp[i][j] 才会大于 0，更新最大值
+                if dp[i][j] > result:
+                    result = dp[i][j]
+                    
+        return result
+    	
+```
+
+
+
+
+
+
+
+## 最长公共子序列
+
+<img src="./assets/image-20261027110240589.png" alt="image-20261027110240589" style="zoom:50%;" />
+
+###  思路
+
+**1.dp[i][j] :text1 的前 i 个字符和 text2 的前 j 个字符中，最长公共子序列的长度**
+
+2.递推公式： 如下图，dpi j 可以由以下表示 ， 从三个维度冲来
+
+<img src="./assets/image-20261027105425149.png" alt="image-20261027105425149" style="zoom:50%;" />
+
+### 伪代码
+
+```python
+									dp数组长度为n+1  和m+1的代码 （因为有索引i-1，j-1，所以这样方便）
+#dp[i][j] :text1 的前 i 个字符和 text2 的前 j 个字符中，最长公共子序列的长度
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+
+        dp=[[0]* (len(text2)+1) for _ in range(0,len(text1)+1)] #+1 也可以说是方便返回
+
+        for i in range(1,len(text1)+1):
+            for j in range(1,len(text2)+1):
+                if text1[i-1]==text2[j-1]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                else :
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+
+        return dp[len(text1)][len(text2)]
+```
+
+
+
+
+
+
+
+
+
+## 不相交的线
+
+<img src="./assets/image-20261027112723360.png" alt="image-20261027112723360" style="zoom:50%;" />
+
+###  思路
+
+这一题思路和上一题一模一样，代码也一模一样
+
+一开始我还在想，如果一开始第一个数组是斜的，但是如果一开始不是最长的结果的斜的，他最后会被取max给对冲掉 dp[i][j]=max(dp[i-1][j],dp[i][j-1])  也就是第12行对冲
+
+### 伪代码
+
+```python
+									dp数组长度为n+1  和m+1的代码 （因为有索引i-1，j-1，所以这样方便）
+#dp[i][j] :text1 的前 i 个字符和 text2 的前 j 个字符中，最长公共子序列的长度
+class Solution:
+    def maxUncrossedLines(self, nums1: list[int], nums2: list[int]) -> int:
+        dp=[[0]*(len(nums2)+1) for _ in range(0,len(nums1)+1)]
+
+        for i in range(1,len(nums1)+1):
+            for j in range(1,len(nums2)+1):
+                if nums1[i-1]==nums2[j-1]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                else:
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+        return dp[len(nums1)][len(nums2)]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 最大子序和
+
+<img src="./assets/image-20261027144726918.png" alt="image-20261027144726918" style="zoom:50%;" />
+
+子数组是数组中的一个连续部分
+
+子数组是数组中的一个连续部分
+
+子数组是数组中的一个连续部分
+
+###  思路
+
+
+
+**1.dp【i】表示以 nums[i] 作为结尾的连续子数组，所能获得的最大和。**
+
+**2.递推公式：  dp[i]=max(dp[i-1]+nums[i],nums[i])		要么继承之前的，要么自己作为做大和的起点 **         因为子数组一定有一个作为结尾的，他遍历了所有以这个结尾的 
+
+### 伪代码
+
+```python
+#dp【i】表示以 nums[i] 作为结尾的连续子数组，所能获得的最大和。
+
+
+class Solution:
+    def maxSubArray(self, nums: list[int]) -> int:
+        if not nums:
+            return 0
+        dp=[0]*len(nums) 
+        dp[0] = nums[0]
+        result=dp[0]
+        
+        for i in range(1,len(nums)):
+            dp[i]=max(dp[i-1]+nums[i],nums[i])# 要么继承之前的，要么自己作为做大和的起点  因为子数组一定有一个作为结尾的，他遍历了所有以这个结尾的 
+            result=max(result,dp[i])
+        return result
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 判断子序列
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
+```
+
+
+
+
+
+
+
+## 不同的子序列
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
+```
+
+
+
+
+
+
+
+
+
+## 两个字符串的删除操作
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
+```
+
+
+
+
+
+
+
+## 编辑距离
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
+```
+
+
+
+
+
+## 回文子串
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
+```
+
+
+
+
+
+
+
+## 最长回文子序列
+
+###  思路
+
+
+
+### 伪代码
+
+```python
+
 ```
 
 
