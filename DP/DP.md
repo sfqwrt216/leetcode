@@ -2099,7 +2099,22 @@ class Solution:
 
 
 
-## 两个数组
+## 两个数组、
+
+```python
+        for i in range(1,len(text1)+1):
+            for j in range(1,len(text2)+1):
+                if text1[i-1]==text2[j-1]:				 #如果相同  
+                    dp[i][j]=dp[i-1][j-1]+1   
+                else :
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1]) #如果不同
+```
+
+
+
+
+
+
 
 ## 最长重复子数组
 
@@ -2111,7 +2126,9 @@ class Solution:
 
 2. 递推公式   dp【i】【j】= dp【i-1】【j-1】+1
 
+   3. 子数组要连续？ 所以只能+1  dp[i][j] = dp[i - 1][j - 1] + 1   从上一个状态推来
    
+      
 
 ### 伪代码
 
@@ -2157,8 +2174,7 @@ class Solution:
                     dp[i][j] = dp[i - 1][j - 1] + 1 
                 
                 # 只有在匹配成功时，dp[i][j] 才会大于 0，更新最大值
-                if dp[i][j] > result:
-                    result = dp[i][j]
+                result=max(result,dp[i][j])
                     
         return result
     	
@@ -2252,7 +2268,7 @@ class Solution:
 
 
 
-## 最大子序和
+## 最大子序和（一维）
 
 <img src="./assets/image-20261027144726918.png" alt="image-20261027144726918" style="zoom:50%;" />
 
@@ -2306,13 +2322,37 @@ class Solution:
 
 ## 判断子序列
 
+<img src="./assets/image-20261027164256776.png" alt="image-20261027164256776" style="zoom: 67%;" />
+
 ###  思路
 
+1.思路还是和公共最大子序和一样 ，就是最后判断一下 dp【m】【n】 是不是等于s的长度，因为不就是要判断s是不是t的子序列嘛所以就判断即可
 
+**2.dp[i][j] : 以nums1的i和nums2的j 结尾的 的最大的公共序列长度** 
+
+3.递推公式： 如下图，dpi j 可以由以下表示 ， 从三个维度冲来
+
+<img src="./assets/image-20261027105425149.png" alt="image-20261027105425149" style="zoom:50%;" />
 
 ### 伪代码
 
 ```python
+#dp[i][j] : 以nums1的i和nums2的j 结尾的 的最大的公共序列长度 
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        dp=[[0]*(len(t)+1)  for _ in range(0,(len(s)+1))]
+
+        for i in range(1,len(s)+1):
+            for j in range(1,len(t)+1):
+                if s[i-1]==t[j-1]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                else:
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+        
+        if dp[len(s)][len(t)]==len(s):
+            return True
+        else :
+            return False
 
 ```
 
@@ -2324,14 +2364,51 @@ class Solution:
 
 ## 不同的子序列
 
+<img src="./assets/image-20261027173346820.png" alt="image-20261027173346820" style="zoom:50%;" />
+
 ###  思路
+
+1.**`dp[i][j]` 的含义：** 我们只看 `s` 的前 `i` 个字符（相当于拿一把剪刀，把 `s` 剪短），要从里面挑字符凑出 `t` 的前 `j` 个字符
+
+2.递推公式：
+
+```python
+# 情况1：匹配上了。分为“用当前 s 的字符去凑” + “不用当前 s 的字符去凑”
+# 左边的 dp[i-1][j-1] 是“用”，因为t的最后一个和s的目前这个对上了 
+#右边的 dp[i-1][j] 是“不用” s扔掉了当前下标为i的字符（不用感觉就是继承一下最大值而已）
+                    dp[i][j]=dp[i-1][j-1]+dp[i-1][j]
+# 情况2：没匹配上。当前 s 的字符没用，只能看前面 s 的前缀能不能凑出 t，就是继承最大值
+                    dp[i][j]=dp[i-1][j]
+```
 
 
 
 ### 伪代码
 
 ```python
+#dp 【i】【j】含义   在 s 字符串的前 i 个字符中，挑选出子序列，能够拼成 t 字符串的前 j 个字符，一共有多少种拼法（方案数）
+class Solution:
+    def numDistinct(self, s: str, t: str) -> int:
+        dp=[[0]*(len(t)+1) for _ in range(0,len(s)+1)]
+        
+        # 初始化：
+        # 1. 当 t 为空串时 (j=0)，s 中任何前缀（包括空串）都只有 1 种方法凑出空串（就是什么都不选）
+        for i in range(0,len(s)+1):
+            dp[i][0]=1
+        # 2. 当 s 为空串，t 不为空时 (i=0, j>0)，方案数肯定是 0（默认就是0，不需要写）
 
+        for i in range(1,len(s)+1):
+            for j in  range(1,len(t)+1):
+
+                if s[i-1]==t[j-1]:
+# 情况1：匹配上了。分为“用当前 s 的字符去凑” + “不用当前 s 的字符去凑”
+# 左边的 dp[i-1][j-1] 是“用”，因为t的最后一个和s的目前这个对上了 
+#右边的 dp[i-1][j] 是“不用” s扔掉了当前下标为i的字符（不用感觉就是继承一下最大值而已）
+                    dp[i][j]=dp[i-1][j-1]+dp[i-1][j]
+                else:  # 情况2：没匹配上。当前 s 的字符没用，只能看前面 s 的前缀能不能凑出 t，就是继承最大值
+                    dp[i][j]=dp[i-1][j]
+
+        return dp[len(s)][len(t)]
 ```
 
 
@@ -2344,13 +2421,40 @@ class Solution:
 
 ## 两个字符串的删除操作
 
+<img src="./assets/image-20261027213826743.png" alt="image-20261027213826743" style="zoom:50%;" />
+
 ###  思路
 
+**1.dp含义 ：在word1 的前i个字符 和word2 的前j个字符 对齐需要的最小步数**
 
+2 .如果遍历的字符相同    word1[i-1]==word2[j-1]:  那么就不用进行操作，  dp[i][j]=dp[i-1][j-1]  继承数量即可
+
+3.如果遍历的字符不同   从左边继承或者上方继承最小值然后 +1  
+
+ #dp[i-1][j]+1表示删除了word1 也就是i-1，dp[i][j-1]+1表示删除了word2 也就是j-1
 
 ### 伪代码
 
 ```python
+#dp含义 ：在word1 的前i个字符 和word2 的前j个字符 对齐需要的最小步数
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        dp=[[0]*(len(word2)+1) for _ in range(0,len(word1)+1)]
+
+        for i in range(0,len(word1)+1):#第一列  word2 为 0 也就是空字符 ，word1只能一直删
+            dp[i][0]=i
+
+        for j in range(0,len(word2)+1):#第一行 word1 为 0 也就是空字符 ，word2只能一直删
+            dp[0][j]=j        
+        
+        for i in range(1,len(word1)+1):
+            for j in range(1,len(word2)+1):
+                if word1[i-1]==word2[j-1]:
+                    dp[i][j]=dp[i-1][j-1]
+                else:
+                    dp[i][j]=min(dp[i-1][j]+1,dp[i][j-1]+1) #dp[i-1][j]+1表示删除了word1 也就是i-1，dp[i][j-1]+1表示删除了word2 也就是j-1
+                     #题目只能删除操作 所以没有dp【i】【j】+1
+        return dp[len(word1)][len(word2)]
 
 ```
 
@@ -2362,15 +2466,55 @@ class Solution:
 
 ## 编辑距离
 
+<img src="./assets/image-20261028151938701.png" alt="image-20261028151938701" style="zoom:50%;" />
+
 ###  思路
 
+和上一题字符串删除操作基本类似
 
+1.dp含义 ：在word1 的前i个字符 和word2 的前j个字符 对齐需要的最小步数
+
+
+
+递推公式：
+
+1. dp[i][j]=dp[i-1][j-1]          i和j字符一样 ，直接继承dp[i-1][j-1] 无需操作
+
+2.  dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1
+
+   #dp[i - 1][j - 1]  替换操作： 把i和j字符其中一个换成相同的
+   #dp[i - 1][j]      删除操作： 删掉了 i字符  看下dp[i - 1][j] 最少操作数
+   #dp[i][j - 1]      删除操作：（向 word1 中插入）  删掉了j字符  看下dp[i][j - 1]  最少操作数 
+
+   
 
 ### 伪代码
 
 ```python
-
+#dp含义 ：在word1 的前i个字符 和word2 的前j个字符 对齐需要的最小步数
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        dp=[[0]*(len(word2)+1) for _ in range(0,len(word1)+1)]
+		
+        #初始化
+        for i in range(0,len(word1)+1):#第一列  word2 为 0 也就是空字符 ，word1只能一直删
+            dp[i][0]=i
+        for j in range(0,len(word2)+1):#第一行 word1 为 0 也就是空字符 ，word2只能一直删
+            dp[0][j]=j        
+        
+        for i in range(1,len(word1)+1):
+            for j in range(1,len(word2)+1):
+                if word1[i-1]==word2[j-1]:
+                    dp[i][j]=dp[i-1][j-1]#i和j字符一样 ，直接继承dp[i-1][j-1]
+                else:
+                    dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1
+#dp[i - 1][j - 1]  替换操作： 把i和j字符其中一个换成相同的
+#dp[i - 1][j]      删除操作： 删掉了 i字符  看下dp[i - 1][j] 最少操作数
+#dp[i][j - 1]      删除操作：（向 word1 中插入）  删掉了j字符  看下dp[i][j - 1]  最少操作数 
+        return dp[len(word1)][len(word2)]
 ```
+
+
 
 
 
@@ -2378,33 +2522,122 @@ class Solution:
 
 ## 回文子串
 
+<img src="./assets/image-20261028162058032.png" alt="image-20261028162058032" style="zoom:50%;" />
+
+aba：  前面的a和后面的a都算两个 回文子串
+
+
+
 ###  思路
+
+1.dp[i][j] 表示：字符串 s 在下标区间 [i, j] （即从第 i 个字符到第 j 个字符，包含两端）的子串，是否是回文串
+
+
+
+2.递推公式：   if j - i <= 1: 那就是说明是一个或者两个字符，肯定是回文  ，result+1
+
+​						elif  除了当前 i 和 j相同 ，左右两个都是True的话，那也是回文 ，result+1
+
+
 
 
 
 ### 伪代码
 
 ```python
-
+#i一直在最左侧没动  ，j一直往右侧遍历 ，所以每一次的回文都是不同的  result每次都—+1
+#dp[i][j] 表示：字符串 s 在下标区间 [i, j] （即从第 i 个字符到第 j 个字符，包含两端）的子串，是否是回文串
+class Solution:
+    def countSubstrings(self, s: str) -> int:
+        n = len(s)
+        dp = [[False] * n for _ in range(n)]
+        result = 0
+        for i in range(n - 1, -1, -1):
+            for j in range(i, n):
+                if s[i] == s[j]:
+                    if j - i <= 1:
+                        # 长度 1 或 2：首尾相同就一定是回文。
+                        dp[i][j] = True
+                        result += 1
+                    elif dp[i + 1][j - 1]:
+                        # 长度大于 2：首尾相同，内部也必须是回文。
+                        dp[i][j] = True
+                        result += 1
+        return result
 ```
 
 
 
-
+![image-20261028111249758](./assets/image-20261028111249758.png)
 
 
 
 ## 最长回文子序列
 
+<img src="./assets/image-20261028171444942.png" alt="image-20261028171444942" style="zoom:50%;" />
+
+
+
 ###  思路
 
+1.dp ij :下标i到j 中可能包含的最长的回文子序列
 
+因为这是回文子序列，是不连续的 ，可以包含的最长的回文子序列
+
+
+
+
+
+递推公式：
+
+if  s[i]==s[j]:  那么直接继承之前的最长回文子序列 dp[i][j]=dp[i+1][j-1]+2
+
+else          ：  在  dp[i][j]=max(dp[i+1][j],dp[i][j-1]) 里面找最大  
 
 ### 伪代码
 
 ```python
+#dp ij :下标i到j 中可能包含的最长的回文子序列
+class Solution:
+    def longestPalindromeSubseq(self, s: str) -> int:
+        dp=[[0]* len(s) for _ in range(0,len(s))]
+        # 2. 初始化对角线：单个字符本身就是长度为 1 的回文子序列
+        for i in range(len(s)):
+            dp[i][i] = 1
+
+        for i in range(len(s)-1,-1,-1):
+            for j in range(i+1,len(s)):
+                if s[i]==s[j]:
+                    dp[i][j]=dp[i+1][j-1]+2 			#继承之前的回文子序列  最长序列数+2 
+                else:
+                    dp[i][j]=max(dp[i+1][j],dp[i][j-1]) #继承之前的最大dp[i+1][j]  或者dp[i][j-1]
+                    
+        return dp[0][len(s)-1]
 
 ```
 
 
 
+感觉就是求的不连续就是取max   ，   连续的就是继承+1
+
+
+
+
+
+最少操作个数：dp取min
+
+
+
+
+
+回文子序列 ： 不连续，所以直接一直取max
+
+回文子串： 连续，所以继承
+
+不同的子序列：也是继承因为是统计出现的个数
+
+判断子序列 ：也是计算多少个与之相同
+
+编辑距离： 都说最小的个数了，肯定min
+
+两个字符串删除 ： 都说最小个数了，肯定min
